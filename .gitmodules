@@ -1,0 +1,6 @@
+[submodule "cmake"]
+	path = cmake
+	url = git@github.com:libglug/cmake.git
+[submodule "common_headers"]
+	path = common_headers
+	url = git@github.com:libglug/common_headers.git
