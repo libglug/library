@@ -4,7 +4,7 @@
 
   #define typedef_func(r, x, ...) typedef r(__stdcall *(x))(__VA_ARGS__)
 
-#elif
+#else
 
   #define typedef_func(r, x, ...) typedef r(*(x))(__VA_ARGS__)
 

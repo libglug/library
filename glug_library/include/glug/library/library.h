@@ -1,3 +1,6 @@
+#ifndef GLUG_LIBRARY_H
+#define GLUG_LIBRARY_H
+
 #include <glug/extern.h>
 #include <glug/namespace.h>
 
@@ -16,3 +19,5 @@ extern void    *get_proc(const struct library *lib, const char *name);
 GLUG_EXTERN_END
 
 GLUG_NAMESPACE_END
+
+#endif // GLUG_LIBRARY_H

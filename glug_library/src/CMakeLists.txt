@@ -5,6 +5,7 @@ set(LIBR_SRC_ROOT ${GLUG_LIBR_ROOT}/src)
 set(LIBR_INC_ROOT ${LIBR_INCLUDE_ROOT}/glug)
 
 set(LIBR_HEADERS
+    ${LIBR_INC_ROOT}/library/handle.h
     ${LIBR_INC_ROOT}/library/library.h
     ${LIBR_INC_ROOT}/library/func_def.h
 )
@@ -17,29 +18,19 @@ set(WIN32_SOURCES
 )
 set_compilation_props("${WIN32_SOURCES}" GLUG_OS_WIN32)
 
-# Mac OS sources
+# Unix-like sources
 
-set(MACOS_LIBR_ROOT ${DISP_SRC_ROOT}/macos)
-set(MACOS_SOURCES
+set(UNIX_LIBR_ROOT ${LIBR_SRC_ROOT}/unix)
+set(UNIX_SOURCES
 )
-set_compilation_props("${MACOS_SOURCES}" GLUG_OS_MACOS)
-
-# X11 sources
-
-set(X11_LIBR_ROOT ${DISP_SRC_ROOT}/x11)
-set(X11_SOURCES
-)
-set_compilation_props("${X11_SOURCES}" GLUG_OS_LINUX)
+set_compilation_props("${UNIX_SOURCES}" GLUG_OS_MACOS)
+set_compilation_props("${UNIX_SOURCES}" GLUG_OS_LINUX)
 
 if(${GLUG_OS_WIN32})
 
     add_win32_exports()
 
-elseif(${GLUG_OS_MACOS})
-
-    add_linux_exports()
-
-elseif(${GLUG_OS_LINUX})
+else()
 
     add_linux_exports()
 
@@ -50,6 +41,5 @@ add_library(
     STATIC
     ${LIBR_HEADERS}
     ${WIN32_SOURCES}
-    ${MACOS_SOURCES}
-    ${X11_SOURCES}
+    ${UNIX_SOURCES}
 )
