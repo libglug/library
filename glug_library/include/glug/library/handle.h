@@ -11,21 +11,15 @@ GLUG_EXTERN_START
 #if defined(GLUG_OS_WIN)
 
   #include <windef.h>
-  HMODULE lib_handle(const struct library *lib);
-  const char *extension = "dll";
+  typedef HMODULE so_handle;
 
 #elif defined(GLUG_OS_LIN) || defined(GLUG_OS_MAC)
 
-  #if defined(GLUG_OS_MAC)
+  typedef void* so_handle;
 
-    const char *extension = "dylib";
-
-  #else
-
-    const char *extension = "so";
-
-  #endif
 #endif
+
+extern so_handle lib_handle(const struct library *lib);
 
 GLUG_EXTERN_END
 GLUG_NAMESPACE_END

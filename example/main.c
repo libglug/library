@@ -30,10 +30,29 @@ int main()
 
     free_library(dll);
   }
+
+  return 0;
 }
 
 #elif defined(GLUG_OS_MAC)
 
 #elif defined(GLUG_OS_LIN)
+
+int main()
+{
+  const char *lib_name = "libX11.so";
+  int is_lib = lib_exists(lib_name);
+  printf("%s %s\n", lib_name, is_lib ? "exists" : "doesn't exist");
+
+  if (is_lib)
+  {
+    struct library *so = load_library(lib_name);
+    generic_fcn cursor_pos = get_proc(so, "XQueryPointer");
+
+    free_library(so);
+  }
+
+  return 0;
+}
 
 #endif

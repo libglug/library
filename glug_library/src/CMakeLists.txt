@@ -10,21 +10,27 @@ set(LIBR_HEADERS
     ${LIBR_INC_ROOT}/library/typedef_func.h
 )
 
+set(LIBR_SOURCES
+    ${LIBR_SRC_ROOT}/library.h
+)
+
 # Windows sources
 
 set(WIN32_LIBR_ROOT ${LIBR_SRC_ROOT}/win32)
 set(WIN32_SOURCES
     ${WIN32_LIBR_ROOT}/library.cpp
 )
-set_compilation_props("${WIN32_SOURCES}" GLUG_OS_WIN32)
 
 # Unix-like sources
 
 set(UNIX_LIBR_ROOT ${LIBR_SRC_ROOT}/unix)
 set(UNIX_SOURCES
+    ${UNIX_LIBR_ROOT}/library.cpp
 )
-set_compilation_props("${UNIX_SOURCES}" GLUG_OS_MACOS)
-set_compilation_props("${UNIX_SOURCES}" GLUG_OS_LINUX)
+
+# change compilation rules based on target os
+set_compilation_props("${WIN32_SOURCES}" GLUG_OS_WIN32)
+set_compilation_props("${UNIX_SOURCES}" GLUG_OS_UNIXLIKE)
 
 if(${GLUG_OS_WIN32})
 
@@ -33,13 +39,21 @@ if(${GLUG_OS_WIN32})
 else()
 
     add_linux_exports()
+    set(EXT_LIBS dl)
 
 endif()
 
 add_library(
-    glug_library
+    ${CMAKE_PROJECT_NAME}
     STATIC
     ${LIBR_HEADERS}
+    ${LIBR_SOURCES}
     ${WIN32_SOURCES}
     ${UNIX_SOURCES}
 )
+
+if (DEFINED EXT_LIBS)
+
+    target_link_libraries(${CMAKE_PROJECT_NAME} ${EXT_LIBS})
+
+endif()

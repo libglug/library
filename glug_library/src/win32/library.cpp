@@ -4,14 +4,12 @@
 #include <glug/library/library.h>
 #include <glug/library/handle.h>
 
+#include "../library.h"
+
 namespace glug
 {
 
-struct library {
-  const char *name;
-  bool loaded;
-  HMODULE dll;
-};
+const char *lib_extension = ".dll";
 
 void load_lazy_dll(struct library *lib)
 {
@@ -41,8 +39,11 @@ struct library *lazy_library(const char *name)
 
 void free_library(const struct library *lib)
 {
-  FreeLibrary(lib->dll);
-  delete lib;
+  if (lib)
+  {
+    FreeLibrary(lib->dll);
+    delete lib;
+  }
 }
 
 int lib_is_loaded(const struct library *lib)
@@ -66,7 +67,7 @@ int has_proc(const struct library *lib, const char *proc)
   return get_proc(lib, proc) != nullptr;
 }
 
-HMODULE lib_handle(const struct library *lib)
+so_handle lib_handle(const struct library *lib)
 {
   if (!lib)
     return nullptr;
