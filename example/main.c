@@ -12,10 +12,15 @@ typedef_func(int, GCP, point*);
 
 int main()
 {
-  struct library *dll = load_library("User32");
+  int is_lib = lib_exists("User32");
+  printf("User32.dll %s\n", is_lib ? "exists" : "doesn't exist");
+
+  struct library *dll = lazy_library("User32");
   GCP getCursorPos = (GCP)get_proc(dll, "GetCursorPos");
 
   point p;
   getCursorPos(&p);
   printf("(%d, %d)\n", p.x, p.y);
+
+  free_library(dll);
 }
