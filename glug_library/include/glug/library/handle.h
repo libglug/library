@@ -12,11 +12,19 @@ GLUG_EXTERN_START
 
   #include <windef.h>
   HMODULE lib_handle(const struct library *lib);
+  const char *extension = "dll";
 
-#elif defined(GLUG_OS_LINUX) || defined(GLUG_OS_MAC)
+#elif defined(GLUG_OS_LIN) || defined(GLUG_OS_MAC)
 
+  #if defined(GLUG_OS_MAC)
 
+    const char *extension = "dylib";
 
+  #else
+
+    const char *extension = "so";
+
+  #endif
 #endif
 
 GLUG_EXTERN_END

@@ -4,13 +4,15 @@
 #include <glug/extern.h>
 #include <glug/namespace.h>
 
+#include "typedef_func.h"
+
 GLUG_NAMESPACE_START(glug)
 
 struct library;
+typedef_func(generic_fcn, void*, void);
 
 GLUG_EXTERN_START
 
-typedef void (*generic_fcn)(void);
 int             lib_exists(const char *name);
 
 struct library *load_library(const char *name);

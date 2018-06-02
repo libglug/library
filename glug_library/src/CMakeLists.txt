@@ -7,7 +7,7 @@ set(LIBR_INC_ROOT ${LIBR_INCLUDE_ROOT}/glug)
 set(LIBR_HEADERS
     ${LIBR_INC_ROOT}/library/handle.h
     ${LIBR_INC_ROOT}/library/library.h
-    ${LIBR_INC_ROOT}/library/func_def.h
+    ${LIBR_INC_ROOT}/library/typedef_func.h
 )
 
 # Windows sources
