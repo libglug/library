@@ -14,6 +14,13 @@ namespace glug
   const char *lib_extension = ".dylib";
 #endif
 
+void load_lazy_lib(struct library *lib)
+{
+  dlclose(lib->dl);
+  lib->dl = dlopen(lib->name, RTLD_NOW);
+  lib->loaded = true;
+}
+
 int lib_exists(const char *name)
 {
   void *so = dlopen(name, RTLD_LAZY);
@@ -27,11 +34,17 @@ struct library *load_library(const char *name)
   return so ? new struct library({name, true, so}) : nullptr;
 }
 
+struct library *lazy_library(const char *name)
+{
+  void *so = dlopen(name, RTLD_LAZY);
+  return so ? new struct library({name, false, so}) : nullptr;
+}
+
 void free_library(const struct library *lib)
 {
   if (lib)
   {
-    dlclose(lib->dll);
+    dlclose(lib->dl);
     delete lib;
   }
 }
@@ -46,7 +59,8 @@ generic_fcn get_proc(const struct library *lib, const char *proc)
   if (!lib)
     return nullptr;
 
-  return reinterpret_cast<generic_fcn>(dlsym(lib->dll, proc));
+  const_cast<struct library *>(lib)->loaded = true;
+  return reinterpret_cast<generic_fcn>(dlsym(lib->dl, proc));
 }
 
 int has_proc(const struct library *lib, const char *proc)
@@ -59,7 +73,10 @@ so_handle lib_handle(const struct library *lib)
   if (!lib)
     return nullptr;
 
-  return lib->dll;
+  if (!lib->loaded)
+    load_lazy_lib(const_cast<struct library *>(lib));
+
+  return lib->dl;
 }
 
 } // namespace glug

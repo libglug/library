@@ -1,10 +1,12 @@
+#include <glug/library/handle.h>
+
 namespace glug
 {
 
 struct library {
   const char *name;
   bool loaded;
-  void *dll;
+  so_handle dl;
 };
 
 } // namespace glug

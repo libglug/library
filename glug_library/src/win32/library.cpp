@@ -1,10 +1,9 @@
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-
+#include "../library.h"
 #include <glug/library/library.h>
 #include <glug/library/handle.h>
 
-#include "../library.h"
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 namespace glug
 {
@@ -13,8 +12,8 @@ const char *lib_extension = ".dll";
 
 void load_lazy_dll(struct library *lib)
 {
-  FreeLibrary(lib->dll);
-  lib->dll = LoadLibrary(lib->name);
+  FreeLibrary(lib->dl);
+  lib->dl = LoadLibrary(lib->name);
   lib->loaded = true;
 }
 
@@ -41,7 +40,7 @@ void free_library(const struct library *lib)
 {
   if (lib)
   {
-    FreeLibrary(lib->dll);
+    FreeLibrary(lib->dl);
     delete lib;
   }
 }
@@ -56,10 +55,10 @@ generic_fcn get_proc(const struct library *lib, const char *proc)
   if (!lib)
     return nullptr;
 
-  if (lib->loaded)
+  if (!lib->loaded)
     load_lazy_dll(const_cast<struct library *>(lib));
 
-  return reinterpret_cast<generic_fcn>(GetProcAddress(lib->dll, proc));
+  return reinterpret_cast<generic_fcn>(GetProcAddress(lib->dl, proc));
 }
 
 int has_proc(const struct library *lib, const char *proc)
@@ -72,10 +71,10 @@ so_handle lib_handle(const struct library *lib)
   if (!lib)
     return nullptr;
 
-  if (lib->loaded)
+  if (!lib->loaded)
     load_lazy_dll(const_cast<struct library *>(lib));
 
-  return lib->dll;
+  return lib->dl;
 }
 
 } // namespace glug

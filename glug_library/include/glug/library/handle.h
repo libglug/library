@@ -10,7 +10,8 @@ GLUG_EXTERN_START
 
 #if defined(GLUG_OS_WIN)
 
-  #include <windef.h>
+  #define WIN32_LEAN_AND_MEAN
+  #include <windows.h>
   typedef HMODULE so_handle;
 
 #elif defined(GLUG_OS_LIN) || defined(GLUG_OS_MAC)
@@ -19,7 +20,7 @@ GLUG_EXTERN_START
 
 #endif
 
-extern so_handle lib_handle(const struct library *lib);
+so_handle lib_handle(const struct library *lib);
 
 GLUG_EXTERN_END
 GLUG_NAMESPACE_END

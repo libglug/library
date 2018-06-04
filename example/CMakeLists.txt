@@ -1,2 +1,4 @@
-add_executable(libr_test_c main.c)
-target_link_libraries(libr_test_c ${CMAKE_PROJECT_NAME})
+set(BIN_PROJ_NAME "lib_test")
+
+add_executable(${BIN_PROJ_NAME} main.c)
+target_link_libraries(${BIN_PROJ_NAME} ${CMAKE_PROJECT_NAME})

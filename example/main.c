@@ -1,5 +1,6 @@
 #include <glug/library/library.h>
 #include <glug/library/typedef_func.h>
+#include <glug/library/handle.h>
 
 #include <stdio.h>
 
@@ -16,18 +17,21 @@ typedef_func(gcp, int, point*);
 
 int main()
 {
-  int is_lib = lib_exists("User32");
-  printf("User32.dll %s\n", is_lib ? "exists" : "doesn't exist");
+  const char *lib_name = "User32";
+  int is_lib = lib_exists(lib_name);
+  printf("%s %s\n", lib_name, is_lib ? "exists" : "doesn't exist");
 
   if (is_lib)
   {
-    struct library *dll = lazy_library("User32");
+    struct library *dll = lazy_library(lib_name);
     gcp cursor_pos = (gcp)get_proc(dll, "GetCursorPos");
 
-    point p;
-    cursor_pos(&p);
-    printf("(%d, %d)\n", p.x, p.y);
-
+    if (cursor_pos)
+    {
+      point p;
+      cursor_pos(&p);
+      printf("(%d, %d)\n", p.x, p.y);
+    }
     free_library(dll);
   }
 
@@ -46,7 +50,7 @@ int main()
 
   if (is_lib)
   {
-    struct library *so = load_library(lib_name);
+    struct library *so = lazy_library(lib_name);
     generic_fcn cursor_pos = get_proc(so, "XQueryPointer");
 
     free_library(so);
