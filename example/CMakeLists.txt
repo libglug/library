@@ -7,3 +7,8 @@ install(
     TARGETS ${TEST_PROJ_NAME}
     RUNTIME DESTINATION ${GLUG_DIST_DIR}
 )
+
+install(
+    FILES hello.dll
+    DESTINATION ${GLUG_DIST_DIR}
+)
