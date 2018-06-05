@@ -57,3 +57,8 @@ if (DEFINED EXT_LIBS)
     target_link_libraries(${CMAKE_PROJECT_NAME} ${EXT_LIBS})
 
 endif()
+
+install(
+    TARGETS ${CMAKE_PROJECT_NAME}
+    DESTINATION ${GLUG_DIST_DIR}
+)
