@@ -16,13 +16,13 @@ int main()
 
   if (is_lib)
   {
-    struct library *dll = lazy_library(lib_name);
-    say say_hello = (say)get_proc(dll, "say_hello");
+    struct library *lib = lazy_library(lib_name);
+    say say_hello = (say)get_proc(lib, "say_hello");
 
     if (say_hello)
       say_hello("glub_lib");
 
-    free_library(dll);
+    free_library(lib);
   }
 
   return 0;

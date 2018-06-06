@@ -8,7 +8,19 @@ install(
     RUNTIME DESTINATION ${GLUG_DIST_DIR}
 )
 
+if (${GLUG_OS_WIN32})
+
+    set(EXT_LIB "hello.dll")
+
+elseif(${GLUG_OS_MACOS})
+
+elseif(${GLUG_OS_LINUX})
+
+    set(EXT_LIB "./libhello.so" "./hello")
+
+endif()
+
 install(
-    FILES hello.dll
+    FILES ${EXT_LIB}
     DESTINATION ${GLUG_DIST_DIR}
 )

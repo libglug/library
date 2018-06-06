@@ -24,7 +24,7 @@ void load_lazy_lib(struct library *lib)
 int lib_exists(const char *name)
 {
   void *so = dlopen(name, RTLD_LAZY);
-  dlclose(so);
+  if (so) dlclose(so);
   return so != nullptr;
 }
 

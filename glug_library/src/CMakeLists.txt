@@ -60,5 +60,10 @@ endif()
 
 install(
     TARGETS ${CMAKE_PROJECT_NAME}
-    DESTINATION ${GLUG_DIST_DIR}
+    DESTINATION ${GLUG_DIST_DIR}/lib
+)
+
+install(
+    DIRECTORY ${LIBR_INC_ROOT}
+    DESTINATION ${GLUG_DIST_DIR}/include
 )
