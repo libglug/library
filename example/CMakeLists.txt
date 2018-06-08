@@ -14,9 +14,11 @@ if (${GLUG_OS_WIN32})
 
 elseif(${GLUG_OS_MACOS})
 
+    set(EXT_LIB "hello.dylib")
+
 elseif(${GLUG_OS_LINUX})
 
-    set(EXT_LIB "./libhello.so" "./hello")
+    set(EXT_LIB "hello.so")
 
 endif()
 

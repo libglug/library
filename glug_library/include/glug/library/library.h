@@ -10,9 +10,9 @@ GLUG_NAMESPACE_START(glug)
 
 struct library;
 typedef_func(generic_fcn, void*, void);
-extern const char *lib_extension;
 
 GLUG_EXTERN_START
+extern const char *lib_extension;
 
 int             lib_exists(const char *name);
 
