@@ -67,3 +67,8 @@ install(
     DIRECTORY ${LIBR_INC_ROOT}
     DESTINATION ${GLUG_DIST_DIR}/include
 )
+
+install(
+    DIRECTORY ${PROJECT_SOURCE_DIR}/common_headers/include
+    DESTINATION ${GLUG_DIST_DIR}
+)
