@@ -1,6 +1,8 @@
 #ifndef GLUG_LIBRARY_H
 #define GLUG_LIBRARY_H
 
+#include <stdint.h>
+
 #include <glug/extern.h>
 #include <glug/namespace.h>
 
@@ -23,6 +25,10 @@ int             lib_is_loaded(const struct library *lib);
 
 int             has_proc(const struct library *lib, const char *name);
 generic_fcn     get_proc(const struct library *lib, const char *name);
+
+char **         lib_symbols(const struct library *lib, size_t *count);
+char **         free_lib_symbols(char **symbol_list);
+
 
 GLUG_EXTERN_END
 

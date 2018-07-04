@@ -35,6 +35,7 @@ set_compilation_props("${UNIX_SOURCES}" GLUG_OS_UNIXLIKE)
 if(${GLUG_OS_WIN32})
 
     add_win32_exports()
+    set(EXT_LIBS Dbghelp)
 
 else()
 
