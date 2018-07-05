@@ -3,10 +3,11 @@
 namespace glug
 {
 
-struct library {
-  const char *name;
-  bool loaded;
-  so_handle dl;
+struct library
+{
+    const char *name;
+    bool loaded;
+    so_handle dl;
 };
 
 } // namespace glug

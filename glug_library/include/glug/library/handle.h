@@ -10,13 +10,13 @@ GLUG_EXTERN_START
 
 #if defined(GLUG_OS_WIN)
 
-  #define WIN32_LEAN_AND_MEAN
-  #include <windows.h>
-  typedef HMODULE so_handle;
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+    typedef HMODULE so_handle;
 
 #elif defined(GLUG_OS_LIN) || defined(GLUG_OS_MAC)
 
-  typedef void* so_handle;
+    typedef void* so_handle;
 
 #endif
 
