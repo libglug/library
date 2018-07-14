@@ -8,12 +8,6 @@
 namespace glug
 {
 
-#if defined(GLUG_OS_LIN)
-    const char *lib_extension = ".so";
-#elif defined(GLUG_OS_MAC)
-    const char *lib_extension = ".dylib";
-#endif
-
 void load_lazy_lib(struct library *lib)
 {
     dlclose(lib->dl);

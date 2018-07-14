@@ -15,21 +15,33 @@ set(LIBR_SOURCES
 )
 
 # Windows sources
-
 set(WIN32_LIBR_ROOT ${LIBR_SRC_ROOT}/win32)
 set(WIN32_SOURCES
     ${WIN32_LIBR_ROOT}/library.cpp
 )
 
-# Unix-like sources
+# MacOS sources
+set(MACOS_LIBR_ROOT ${LIBR_SRC_ROOT}/macos)
+set(MACOS_SOURCES
+    ${MACOS_LIBR_ROOT}/library.cpp
+)
 
-set(UNIX_LIBR_ROOT ${LIBR_SRC_ROOT}/unix)
+#Linux sources
+set(LINUX_LIBR_ROOT ${LIBR_SRC_ROOT}/linux)
+set(LINUX_SOURCES
+    ${LINUX_LIBR_ROOT}/library.cpp
+)
+
+# Unix-like sources
+set(UNIX_LIBR_ROOT ${LIBR_SRC_ROOT}/nix)
 set(UNIX_SOURCES
     ${UNIX_LIBR_ROOT}/library.cpp
 )
 
 # change compilation rules based on target os
 set_compilation_props("${WIN32_SOURCES}" GLUG_OS_WIN32)
+set_compilation_props("${MACOS_SOURCES}" GLUG_OS_MACOS)
+set_compilation_props("${LINUX_SOURCES}" GLUG_OS_LINUX)
 set_compilation_props("${UNIX_SOURCES}" GLUG_OS_UNIXLIKE)
 
 if(${GLUG_OS_WIN32})
@@ -50,6 +62,8 @@ add_library(
     ${LIBR_HEADERS}
     ${LIBR_SOURCES}
     ${WIN32_SOURCES}
+    ${MACOS_SOURCES}
+    ${LINUX_SOURCES}
     ${UNIX_SOURCES}
 )
 

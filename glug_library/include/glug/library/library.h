@@ -1,7 +1,7 @@
 #ifndef GLUG_LIBRARY_H
 #define GLUG_LIBRARY_H
 
-#include <stdint.h>
+#include <stddef.h>
 
 #include <glug/extern.h>
 #include <glug/namespace.h>
