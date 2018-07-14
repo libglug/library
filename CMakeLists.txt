@@ -9,6 +9,7 @@ include_directories(${LIBR_INCLUDE_ROOT})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/common_headers/include)
 
 set(GLUG_DIST_DIR ${CMAKE_BINARY_DIR}/dist)
+set(GLUG_XMPL_DIR ${CMAKE_BINARY_DIR}/example)
 
 add_subdirectory(glug_library/src)
 add_subdirectory(example)

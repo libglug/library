@@ -17,6 +17,7 @@ int main()
     char *full_name = malloc(full_len + 1);
     strncpy(full_name, lib_name, name_len);
     strncpy(full_name + name_len, lib_extension, ext_len);
+    full_name[full_len] = '\0';
 
     int is_lib = lib_exists(full_name);
     printf("%s %s\n", full_name, is_lib ? "exists" : "doesn't exist");
@@ -27,9 +28,9 @@ int main()
         struct library *libhello = lazy_library(full_name);
         char **hello_symbols = lib_symbols(libhello, &symbols);
 
-        printf("symbols:\n");
-        for (;symbols--;)
-            printf("%s\n", hello_symbols[symbols]);
+        printf("%zd symbol(s):\n", symbols);
+        for (char **psym = hello_symbols; *psym; ++psym)
+            printf("  %s\n", *psym);
 
         say say_hello = (say)get_proc(libhello, "say_hello");
         if (say_hello)
