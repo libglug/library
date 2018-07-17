@@ -57,6 +57,7 @@ char **lib_symbols(const struct library *lib, size_t *count)
         case LC_SYMTAB:
             symtab = reinterpret_cast<const symtab_command *>(load_cmd);
             break;
+        case LC_SEGMENT:
         case LC_SEGMENT_64:
             const segment_command_t *segtab = reinterpret_cast<const segment_command_t *>(load_cmd);
             if (!strcmp(segtab->segname, SEG_TEXT))
