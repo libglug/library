@@ -12,33 +12,32 @@ int main()
     const char *lib_name = "hello";
     const size_t name_len = strlen(lib_name);
     const size_t ext_len = strlen(lib_extension);
-    const size_t full_len = name_len + ext_len;
+    const size_t full_len = name_len + ext_len + 1; // +1 for NULL
 
-    char *full_name = malloc(full_len + 1);
-    strncpy(full_name, lib_name, name_len);
-    strncpy(full_name + name_len, lib_extension, ext_len);
-    full_name[full_len] = '\0';
+    char *full_name = malloc(full_len);
+    glug_lib_make_name(full_name, lib_name, full_len);
 
-    int is_lib = lib_exists(full_name);
+    int is_lib = glug_lib_exists(full_name);
     printf("%s %s\n", full_name, is_lib ? "exists" : "doesn't exist");
 
     if (is_lib)
     {
         size_t symbols = 0;
-        struct library *libhello = lazy_library(full_name);
-        char **hello_symbols = lib_symbols(libhello, &symbols);
+        struct library *libhello = glug_lib_lazy(full_name);
+        char **hello_symbols = glug_lib_symbols(libhello, &symbols);
 
         printf("%zd symbol(s):\n", symbols);
         for (char **psym = hello_symbols; *psym; ++psym)
             printf("  %s\n", *psym);
 
-        say say_hello = (say)get_proc(libhello, "say_hello");
+        say say_hello = (say)glug_lib_proc(libhello, "say_hello");
         if (say_hello)
             say_hello("glub_lib");
 
-        hello_symbols = free_lib_symbols(hello_symbols);
-        free_library(libhello);
+        hello_symbols = glug_lib_free_symbols(hello_symbols);
+        glug_lib_free(libhello);
     }
 
+    free(full_name);
     return 0;
 }

@@ -7,35 +7,38 @@ set(LIBR_INC_ROOT ${LIBR_INCLUDE_ROOT}/glug)
 set(LIBR_HEADERS
     ${LIBR_INC_ROOT}/library/handle.h
     ${LIBR_INC_ROOT}/library/library.h
+    ${LIBR_INC_ROOT}/library/library_t.h
     ${LIBR_INC_ROOT}/library/typedef_func.h
 )
 
 set(LIBR_SOURCES
-    ${LIBR_SRC_ROOT}/library.h
+    ${LIBR_SRC_ROOT}/library_t.h
+    ${LIBR_SRC_ROOT}/library.c
+    ${LIBR_SRC_ROOT}/library_platform.h
 )
 
 # Windows sources
 set(WIN32_LIBR_ROOT ${LIBR_SRC_ROOT}/win32)
 set(WIN32_SOURCES
-    ${WIN32_LIBR_ROOT}/library.cpp
+    ${WIN32_LIBR_ROOT}/library.c
 )
 
 # MacOS sources
 set(MACOS_LIBR_ROOT ${LIBR_SRC_ROOT}/macos)
 set(MACOS_SOURCES
-    ${MACOS_LIBR_ROOT}/library.cpp
+    ${MACOS_LIBR_ROOT}/library.c
 )
 
-#Linux sources
+# Linux sources
 set(LINUX_LIBR_ROOT ${LIBR_SRC_ROOT}/linux)
 set(LINUX_SOURCES
-    ${LINUX_LIBR_ROOT}/library.cpp
+    ${LINUX_LIBR_ROOT}/library.c
 )
 
 # Unix-like sources
 set(UNIX_LIBR_ROOT ${LIBR_SRC_ROOT}/nix)
 set(UNIX_SOURCES
-    ${UNIX_LIBR_ROOT}/library.cpp
+    ${UNIX_LIBR_ROOT}/library.c
 )
 
 # change compilation rules based on target os
@@ -47,7 +50,6 @@ set_compilation_props("${UNIX_SOURCES}" GLUG_OS_UNIXLIKE)
 if(${GLUG_OS_WIN32})
 
     add_win32_exports()
-    set(EXT_LIBS Dbghelp)
 
 else()
 
