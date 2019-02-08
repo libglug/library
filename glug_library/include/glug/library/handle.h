@@ -20,7 +20,7 @@ GLUG_EXTERN_START
 
 #endif
 
-so_handle lib_handle(const struct library *lib);
+so_handle lib_handle(const struct glug_library_t *lib);
 
 GLUG_EXTERN_END
 

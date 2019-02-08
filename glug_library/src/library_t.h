@@ -4,7 +4,7 @@
 #include <glug/library/library_t.h>
 #include <glug/library/handle.h>
 
-struct library
+struct glug_library_t
 {
     char *name;
     int loaded;

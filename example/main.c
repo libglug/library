@@ -23,7 +23,7 @@ int main()
     if (is_lib)
     {
         size_t symbols = 0;
-        struct library *libhello = glug_lib_lazy(full_name);
+        struct glug_library_t *libhello = glug_lib_lazy(full_name);
         char **hello_symbols = glug_lib_symbols(libhello, &symbols);
 
         printf("%zd symbol(s):\n", symbols);
