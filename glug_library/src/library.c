@@ -99,11 +99,11 @@ char **glug_lib_symbols(const struct glug_library_t *lib, size_t *count)
 {
     char **symbols = lib_symbols(lib->dl, count);
     // always provide a "list" to iterate
-    if (!symbols && count)
+    if (!symbols)
     {
         symbols = malloc(sizeof(char *));
         symbols[0] = NULL;
-        *count = 0;
+        if (count) *count = 0;
     }
 
     return symbols;
