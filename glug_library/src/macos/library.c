@@ -45,7 +45,7 @@ char **lib_symbols(const so_handle so, size_t *count)
     segment_command_t segtext, seglink;
     uintptr_t phead, offset, strs;
     struct nlist_64 *sym;
-    size_t items = 0;
+    size_t nsym = 0;
 
     symbols[0] = NULL;
     // can't find "so", return early
@@ -103,20 +103,20 @@ char **lib_symbols(const so_handle so, size_t *count)
     sym = (struct nlist_64 *)(phead + symtab.symoff + offset);
     for (i = 0; i < symtab.nsyms; ++i, ++sym)
         if ((sym->n_type & N_EXT) == N_EXT && sym->n_value)
-             ++items;
+             ++nsym;
 
     // copy strings into the symbols array
-    symbols = realloc(symbols, (items + 1) * sizeof(char *));
-    items = 0;
+    symbols = realloc(symbols, (nsym + 1) * sizeof(char *));
+    nsym = 0;
     sym = (struct nlist_64 *)(phead + symtab.symoff + offset);
     for (i = 0; i < symtab.nsyms; ++i, ++sym)
         if ((sym->n_type & N_EXT) == N_EXT && sym->n_value)
-            symbols[items++] = strdup((char *)(strs + sym->n_un.n_strx + 1));
+            symbols[nsym++] = strdup((char *)(strs + sym->n_un.n_strx + 1));
 
     // "return" the number of symbols
-    if (count) *count = items;
+    if (count) *count = nsym;
 
     // set the last symbol entry as NULL to simplify iteration and return
-    symbols[items] = NULL;
+    symbols[nsym] = NULL;
     return symbols;
 }

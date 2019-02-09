@@ -31,7 +31,8 @@ void glug_lib_make_name(char *ext_name, const char *name, size_t count)
 int glug_lib_exists(const char *name)
 {
     so_handle dl = lazy_load_lib(name);
-    free_lib(dl);
+    if (dl)
+        free_lib(dl);
 
     return dl != NULL;
 }
@@ -96,7 +97,16 @@ generic_fcn glug_lib_proc(const struct glug_library_t *lib, const char *proc)
 
 char **glug_lib_symbols(const struct glug_library_t *lib, size_t *count)
 {
-    return lib_symbols(lib->dl, count);
+    char **symbols = lib_symbols(lib->dl, count);
+    // always provide a "list" to iterate
+    if (!symbols && count)
+    {
+        symbols = malloc(sizeof(char *));
+        symbols[0] = NULL;
+        *count = 0;
+    }
+
+    return symbols;
 }
 
 char **glug_lib_free_symbols(char **symbol_list)
