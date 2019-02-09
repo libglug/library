@@ -44,7 +44,7 @@ char **lib_symbols(const so_handle so, size_t *count)
     psymtab = (const ElfW(Sym) *)get_tag(map->l_ld, DT_SYMTAB)->d_un.d_ptr;
 
     // if strsz, strtab, or symtab are NULL, fail
-    if (!strsz || !pstrtab || !psymtab) return NULL;
+    if (!strsz || !pstrtab || !psymtab) return symbols;
 
     // count relevant symbols between the STN_UNDEF symbols
     for(symbol = psymtab + 1; symbol && symbol->st_info != STN_UNDEF; ++symbol)

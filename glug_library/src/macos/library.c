@@ -35,7 +35,7 @@ static uint32_t get_lib_index(const so_handle so)
 
 char **lib_symbols(const so_handle so, size_t *count)
 {
-    char **symbols = malloc(sizeof(char *));
+    char **symbols = NULL;
     uint32_t i = get_lib_index(so);
     const mach_header_t *head;
     uintptr_t pload_cmd;
@@ -47,13 +47,8 @@ char **lib_symbols(const so_handle so, size_t *count)
     struct nlist_64 *sym;
     size_t nsym = 0;
 
-    symbols[0] = NULL;
     // can't find "so", return early
-    if (i == (uint32_t)-1)
-    {
-        if (count) *count = 0;
-        return symbols;
-    }
+    if (i == (uint32_t)-1) return symbols;
 
     head = (const mach_header_t *)_dyld_get_image_header(i);
     pload_cmd = (uintptr_t)head + sizeof(mach_header_t);
@@ -83,11 +78,7 @@ char **lib_symbols(const so_handle so, size_t *count)
     }
 
     // if we don't have all we need, early out
-    if (!psymtab || !psegtext || !pseglink)
-    {
-        if (count) *count = 0;
-        return symbols;
-    }
+    if (!psymtab || !psegtext || !pseglink) return symbols;
 
     // copy the tables and segments
     memcpy(&symtab,  (void *)psymtab, sizeof(struct symtab_command));

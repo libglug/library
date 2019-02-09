@@ -32,7 +32,7 @@ void free_lib(so_handle so)
 
 char **lib_symbols(const so_handle so, size_t *count)
 {
-    char **symbols = malloc(sizeof(char *));
+    char **symbols = NULL;
     IMAGE_DOS_HEADER *doshdr;
     IMAGE_FILE_HEADER fhdr;
     IMAGE_OPTIONAL_HEADER opthdr;
@@ -42,8 +42,6 @@ char **lib_symbols(const so_handle so, size_t *count)
     DWORD exprva, sig;
     DWORD *nameaddrs;
     size_t i = 0;
-
-    symbols[0] = NULL;
 
     // verify this is a valid PE by checking signatures
     doshdr = (IMAGE_DOS_HEADER *)so;
@@ -70,7 +68,7 @@ char **lib_symbols(const so_handle so, size_t *count)
     memcpy(&exp, base + exprva, sizeof(IMAGE_EXPORT_DIRECTORY));
     nameaddrs = malloc(exp.NumberOfNames * sizeof(DWORD));
     memcpy(nameaddrs, base + exp.AddressOfNames, exp.NumberOfNames * sizeof(DWORD));
-    symbols = realloc(symbols, (exp.NumberOfNames + 1) * sizeof(char *));
+    symbols = malloc((exp.NumberOfNames + 1) * sizeof(char *));
 
     // copy strings into the symbols array
     for (i = 0; i < exp.NumberOfNames; ++i)
