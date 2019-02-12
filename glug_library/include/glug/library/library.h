@@ -4,18 +4,18 @@
 #include <stddef.h>
 
 #include <glug/extern.h>
-#include "typedef_func.h"
 
 #include <glug/library/library_t.h>
+#include <glug/library/typedef_func.h>
 
 typedef_func(generic_fcn, void*, void);
 
 GLUG_EXTERN_START
 extern const char *lib_extension;
 
-void                   glug_lib_make_name(char *ext_name, const char *name, size_t count);
+size_t                 glug_lib_make_filename(char *dst, const char *name, size_t count);
 int                    glug_lib_exists(const char *name);
-size_t                 glug_lib_name(char *dst, size_t count, const struct glug_library_t *lib);
+size_t                 glug_lib_soname(char *dst, size_t count, const struct glug_library_t *lib);
 
 struct glug_library_t *glug_lib_load(const char *name);
 struct glug_library_t *glug_lib_lazy(const char *name);

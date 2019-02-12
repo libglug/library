@@ -20,7 +20,7 @@ static const ElfW(Dyn) *get_tag(const ElfW(Dyn) *dyn, const ElfW(Sxword) tag)
     return NULL;
 }
 
-size_t lib_name(char *dst, size_t count, const so_handle so)
+size_t lib_soname(char *dst, size_t count, const so_handle so)
 {
     struct link_map *map = (struct link_map*)so;
     ElfW(Dyn) *elf = map->l_ld;
@@ -30,7 +30,7 @@ size_t lib_name(char *dst, size_t count, const so_handle so)
 
     strncpy(dst, (char *)psoname, count);
     if (count) dst[count - 1] = '\0'; // mark the last byte as null, in case the string didn't fit
-    return strlen((char *)psoname);
+    return strlen((char *)psoname) + 1;
 }
 
 static int is_public_fcn(const ElfW(Sym) *symbol, size_t maxoffset)

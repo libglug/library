@@ -11,12 +11,11 @@ int main()
 {
     const char *lib_name = "hello";
     int is_lib = 0;
-    const size_t name_len = strlen(lib_name);
-    const size_t ext_len = strlen(lib_extension);
-    const size_t full_len = name_len + ext_len + 1; // +1 for NULL
+    char *full_name;
+    size_t full_len = glug_lib_make_filename(NULL, lib_name, 0);
 
-    char *full_name = malloc(full_len);
-    glug_lib_make_name(full_name, lib_name, full_len);
+    full_name = malloc(full_len);
+    glug_lib_make_filename(full_name, lib_name, full_len);
 
     is_lib = glug_lib_exists(full_name);
     printf("%s %s\n", full_name, is_lib ? "exists" : "doesn't exist");
@@ -31,9 +30,9 @@ int main()
         char **psym, **hello_symbols = glug_lib_symbols(libhello, &symbols);
 
         // get lib name length and malloc big enough buffer (w/ trailing NULL)
-        namelen = glug_lib_name(NULL, 0, libhello) + 1;
+        namelen = glug_lib_soname(NULL, 0, libhello);
         lib_soname = malloc(namelen * sizeof(char));
-        glug_lib_name(lib_soname, namelen, libhello);
+        glug_lib_soname(lib_soname, namelen, libhello);
         printf("lib so name: %s\n", lib_soname);
 
         printf("%zd symbol(s):\n", symbols);

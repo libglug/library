@@ -71,7 +71,7 @@ static int find_id_dylib(struct load_command *cmd, const uint8_t *pcmd, const ui
     return 0;
 }
 
-size_t lib_name(char *dst, size_t count, const so_handle so)
+size_t lib_soname(char *dst, size_t count, const so_handle so)
 {
     const mach_header_t *head = get_lib_head(so);
     const uint8_t *pdylib = 0;
@@ -88,7 +88,7 @@ size_t lib_name(char *dst, size_t count, const so_handle so)
     memcpy(&dylib, pdylib, sizeof(struct dylib_command));
     strncpy(dst, (const char *)(pdylib + dylib.dylib.name.offset), count);
     if (count) dst[count - 1] = '\0'; // mark the last byte as null, in case the string didn't fit
-    return strlen((const char *)(pdylib + dylib.dylib.name.offset));
+    return strlen((const char *)(pdylib + dylib.dylib.name.offset)) + 1;
 }
 
 static int find_symbol_segments(struct load_command *cmd, const uint8_t *pcmd, const uint8_t **segs[3])

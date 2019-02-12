@@ -16,16 +16,18 @@ static void load_lazy_lib(struct glug_library_t *lib)
     lib->loaded = 1;
 }
 
-void glug_lib_make_name(char *ext_name, const char *name, size_t count)
+size_t glug_lib_make_filename(char *dst, const char *name, size_t count)
 {
-    size_t maxchar = count - 1;
+    size_t maxchar = count;
+    const size_t ext_len = strlen(lib_extension);
     const size_t name_len = strlen(name);
-    maxchar = MIN(maxchar, name_len + strlen(lib_extension));
+    maxchar = MIN(maxchar, name_len + strlen(lib_extension) + 1);
 
-    strncpy(ext_name, name, MAX(count, 0));
+    strncpy(dst, name, MAX(count, 0));
     count -= MIN(name_len, count);
-    strncpy(ext_name + name_len, lib_extension, count);
-    ext_name[maxchar] = '\0'; // mark the last byte as null, in case the other strings don't fit
+    strncpy(dst + name_len, lib_extension, count);
+    if (maxchar) dst[maxchar - 1] = '\0'; // mark the last byte as NULL, in case the other strings don't fit
+    return name_len + ext_len + 1; // account for the trailing NULL
 }
 
 int glug_lib_exists(const char *name)
@@ -37,9 +39,9 @@ int glug_lib_exists(const char *name)
     return dl != NULL;
 }
 
-size_t glug_lib_name(char *dst, size_t count, const struct glug_library_t *lib)
+size_t glug_lib_soname(char *dst, size_t count, const struct glug_library_t *lib)
 {
-    return lib_name(dst, count, lib->dl);
+    return lib_soname(dst, count, lib->dl);
 }
 
 static struct glug_library_t *make_struct(const char *name, int loaded, so_handle dl)
