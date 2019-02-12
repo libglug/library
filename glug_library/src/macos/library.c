@@ -20,6 +20,8 @@ const char *lib_extension = ".dylib";
     typedef struct segment_command segment_command_t;
 #endif
 
+typedef int (*cmd_enum_callback)(struct load_command *, const uint8_t *pcmd, void *);
+
 static uint32_t get_lib_index(const so_handle so)
 {
     for (uint32_t i = _dyld_image_count(); i--;)
@@ -33,57 +35,107 @@ static uint32_t get_lib_index(const so_handle so)
     return (uint32_t)-1;
 }
 
+static const mach_header_t *get_lib_head(const so_handle so)
+{
+    uint32_t i = get_lib_index(so);
+
+    if (i == (uint32_t)-1) return 0;
+
+    return (const mach_header_t *)_dyld_get_image_header(i);
+}
+
+static void enumerate_commands(const mach_header_t *head, cmd_enum_callback cb, void *ctx)
+{
+    struct load_command load_cmd;
+    const uint8_t *pload_cmd;
+
+    // point to the first cmd
+    pload_cmd = (const uint8_t *)head + sizeof(mach_header_t);
+
+    // loop through the commands and call the callback for each
+    for (uint32_t i = 0; i < head->ncmds; ++i, pload_cmd += load_cmd.cmdsize)
+    {
+        memcpy(&load_cmd, pload_cmd, sizeof(struct load_command));
+        if (cb(&load_cmd, pload_cmd, ctx)) return;
+    }
+}
+
+static int find_id_dylib(struct load_command *cmd, const uint8_t *pcmd, const uint8_t **pdylib)
+{
+    if (cmd->cmd == LC_ID_DYLIB)
+    {
+        *pdylib = pcmd;
+        return 1;
+    }
+
+    return 0;
+}
+
+size_t lib_name(char *dst, size_t count, const so_handle so)
+{
+    const mach_header_t *head = get_lib_head(so);
+    const uint8_t *pdylib = 0;
+    struct dylib_command dylib;
+
+    // can't find "so", return early
+    if (!head) return 0;
+
+    // find the lib ident; if not, return early
+    enumerate_commands(head, (cmd_enum_callback)find_id_dylib, &pdylib);
+    if (!pdylib) return 0;
+
+    // copy out the dylib_command struct and then string
+    memcpy(&dylib, pdylib, sizeof(struct dylib_command));
+    strncpy(dst, (const char *)(pdylib + dylib.dylib.name.offset), count);
+    if (count) dst[count - 1] = '\0'; // mark the last byte as null, in case the string didn't fit
+    return strlen((const char *)(pdylib + dylib.dylib.name.offset));
+}
+
+static int find_symbol_segments(struct load_command *cmd, const uint8_t *pcmd, const uint8_t **segs[3])
+{
+    segment_command_t segtab;
+
+    if (cmd->cmd == LC_SYMTAB)
+        *segs[0] = pcmd;
+    else if (cmd->cmd == LC_SEGMENT || cmd->cmd == LC_SEGMENT_64)
+    {
+        memcpy(&segtab, pcmd, sizeof(segment_command_t));
+        if (!strcmp(segtab.segname, SEG_TEXT))
+            *segs[1] = pcmd;
+        else if (!strcmp(segtab.segname, SEG_LINKEDIT))
+            *segs[2] = pcmd;
+    }
+
+    if (*segs[0] && *segs[1] && *segs[2]) return 1;
+
+    return 0;
+}
+
 char **lib_symbols(const so_handle so, size_t *count)
 {
     char **symbols = NULL;
-    uint32_t i = get_lib_index(so);
-    const mach_header_t *head;
-    uintptr_t pload_cmd;
-    uintptr_t psymtab = 0, psegtext = 0, pseglink = 0;
-    const struct load_command *load_cmd;
+    const mach_header_t *head = get_lib_head(so);
+    size_t i, nsym = 0;
+    const uint8_t *psymtab = 0, *psegtext = 0, *pseglink = 0;
+    const uint8_t **psegs[3] = { &psymtab, &psegtext, &pseglink };
     struct symtab_command symtab;
     segment_command_t segtext, seglink;
     uintptr_t phead, offset, strs;
     struct nlist_64 *sym;
-    size_t nsym = 0;
 
     // can't find "so", return early
-    if (i == (uint32_t)-1) return symbols;
+    if (!head) return symbols;
 
-    head = (const mach_header_t *)_dyld_get_image_header(i);
-    pload_cmd = (uintptr_t)head + sizeof(mach_header_t);
-
-    // loop and find the symbol table, text segment, link edit segment pointers
-    for (uint32_t i = 0; i < head->ncmds; ++i, pload_cmd += load_cmd->cmdsize)
-    {
-        load_cmd = (const struct load_command *)pload_cmd;
-        switch (load_cmd->cmd)
-        {
-        case LC_SYMTAB:
-            psymtab = (uintptr_t)load_cmd;
-            break;
-        case LC_SEGMENT:
-        case LC_SEGMENT_64:
-        {
-            segment_command_t segtab;
-            memcpy(&segtab, load_cmd, sizeof(segment_command_t));
-            if (!strcmp(segtab.segname, SEG_TEXT))
-                psegtext = (uintptr_t)load_cmd;
-            else if (!strcmp(segtab.segname, SEG_LINKEDIT))
-                pseglink = (uintptr_t)load_cmd;
-            break;
-        }
-        }
-
-    }
+    // find all the segments needed to parse symbol names
+    enumerate_commands(head, (cmd_enum_callback)find_symbol_segments, psegs);
 
     // if we don't have all we need, early out
     if (!psymtab || !psegtext || !pseglink) return symbols;
 
     // copy the tables and segments
-    memcpy(&symtab,  (void *)psymtab, sizeof(struct symtab_command));
-    memcpy(&segtext, (void *)psegtext, sizeof(segment_command_t));
-    memcpy(&seglink, (void *)pseglink, sizeof(segment_command_t));
+    memcpy(&symtab,  psymtab,  sizeof(struct symtab_command));
+    memcpy(&segtext, psegtext, sizeof(segment_command_t));
+    memcpy(&seglink, pseglink, sizeof(segment_command_t));
 
     // set up some helper pointers
     phead = (uintptr_t)head;

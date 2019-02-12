@@ -20,6 +20,19 @@ static const ElfW(Dyn) *get_tag(const ElfW(Dyn) *dyn, const ElfW(Sxword) tag)
     return NULL;
 }
 
+size_t lib_name(char *dst, size_t count, const so_handle so)
+{
+    struct link_map *map = (struct link_map*)so;
+    ElfW(Dyn) *elf = map->l_ld;
+    uint8_t *pstrtab = (uint8_t *)get_tag(elf, DT_STRTAB)->d_un.d_ptr;
+    const size_t soname_offset = get_tag(map->l_ld, DT_SONAME)->d_un.d_ptr;
+    uint8_t *psoname = pstrtab + soname_offset;
+
+    strncpy(dst, (char *)psoname, count);
+    if (count) dst[count - 1] = '\0'; // mark the last byte as null, in case the string didn't fit
+    return strlen((char *)psoname);
+}
+
 static int is_public_fcn(const ElfW(Sym) *symbol, size_t maxoffset)
 {
     return ELF32_ST_TYPE(symbol->st_info) == STT_FUNC &&   // only functions...

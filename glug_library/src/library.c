@@ -37,6 +37,11 @@ int glug_lib_exists(const char *name)
     return dl != NULL;
 }
 
+size_t glug_lib_name(char *dst, size_t count, const struct glug_library_t *lib)
+{
+    return lib_name(dst, count, lib->dl);
+}
+
 static struct glug_library_t *make_struct(const char *name, int loaded, so_handle dl)
 {
     size_t name_len = strlen(name);

@@ -25,8 +25,16 @@ int main()
     {
         size_t symbols = 0;
         say say_hello;
+        size_t namelen = 0;
+        char *lib_soname;
         struct glug_library_t *libhello = glug_lib_lazy(full_name);
         char **psym, **hello_symbols = glug_lib_symbols(libhello, &symbols);
+
+        // get lib name length and malloc big enough buffer (w/ trailing NULL)
+        namelen = glug_lib_name(NULL, 0, libhello) + 1;
+        lib_soname = malloc(namelen * sizeof(char));
+        glug_lib_name(lib_soname, namelen, libhello);
+        printf("lib so name: %s\n", lib_soname);
 
         printf("%zd symbol(s):\n", symbols);
         for (psym = hello_symbols; *psym; ++psym)
@@ -36,6 +44,7 @@ int main()
         if (say_hello)
             say_hello("glub_lib");
 
+        free(lib_soname);
         hello_symbols = glug_lib_free_symbols(hello_symbols);
         glug_lib_free(libhello);
     }
