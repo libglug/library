@@ -1,24 +1,68 @@
-set(TEST_PROJ_NAME "lib_test")
+project(example)
+include(cmake/add_example.cmake)
 
-add_executable(${TEST_PROJ_NAME} main.c)
-link_directories(${CMAKE_BINARY_DIR}/dist/lib)
-target_link_libraries(${TEST_PROJ_NAME} ${CMAKE_PROJECT_NAME})
+set(LIB glug_library)
+find_package(${LIB} REQUIRED)
+set(GLUG_TARGET_NAME ${LIB}_test)
+set(GLUG_TARGET_NAME++ ${LIB}_test++)
 
-if (${GLUG_OS_WIN32})
+set(INSTALL_PATH example)
 
-    set(EXT_LIB "hello.dll")
+add_example(
+    TARGET_NAME
+        ${GLUG_TARGET_NAME}
+    SRCS
+        main.c
+    LINK_LIB
+        ${LIB}
+)
 
-elseif(${GLUG_OS_MACOS})
+add_example(
+    TARGET_NAME
+        ${GLUG_TARGET_NAME++}
+    SRCS
+        main.cpp
+    LINK_LIB
+        ${LIB}
+)
 
-    set(EXT_LIB "hello.dylib")
+# create of test libs to copy to the build dir
+list(
+    APPEND
+    TEST_LIBS
+    hello.dll
+    hello.dylib
+    hello.so
+)
 
-elseif(${GLUG_OS_LINUX})
-
-    set(EXT_LIB "hello.so")
-
-endif()
+# copy the test libs to the build dir
+foreach(TEST_LIB ${TEST_LIBS})
+    add_custom_command(
+        TARGET
+            ${GLUG_TARGET_NAME} POST_BUILD
+        COMMAND
+            ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_LIB} ${CMAKE_CURRENT_BINARY_DIR}
+    )
+endforeach()
 
 install(
-    FILES ${EXT_LIB}
-    DESTINATION ${GLUG_XMPL_DIR}
+    TARGETS
+        ${GLUG_TARGET_NAME}
+    DESTINATION
+        ${INSTALL_PATH}
+)
+
+install(
+    TARGETS
+        ${GLUG_TARGET_NAME++}
+    DESTINATION
+        ${INSTALL_PATH}
+)
+
+install(
+    FILES
+        ${TEST_LIBS}
+    DESTINATION
+        ${INSTALL_PATH}
 )
