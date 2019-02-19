@@ -81,7 +81,7 @@ void glug_lib_free(struct glug_library_t *lib)
     }
 }
 
-int lib_is_loaded(const struct glug_library_t *lib)
+int glug_lib_is_loaded(const struct glug_library_t *lib)
 {
     return lib && lib->loaded;
 }
@@ -104,15 +104,16 @@ generic_fcn glug_lib_proc(const struct glug_library_t *lib, const char *proc)
 
 char **glug_lib_symbols(const struct glug_library_t *lib, size_t *count)
 {
-    char **symbols = lib_symbols(lib->dl, count);
+    size_t nsymbols = 0;
+    char **symbols = lib_symbols(lib->dl, &nsymbols);
     // always provide a "list" to iterate
     if (!symbols)
     {
         symbols = malloc(sizeof(char *));
         symbols[0] = NULL;
-        if (count) *count = 0;
     }
 
+    if (count) *count = nsymbols;
     return symbols;
 }
 

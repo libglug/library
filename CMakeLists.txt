@@ -40,3 +40,4 @@ if (${BUILD_XMPLS} STREQUAL "ON")
 
 endif()
 
+include(test.cmake)

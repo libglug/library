@@ -4,6 +4,7 @@
 #include <glug/library/handle.h>
 
 #include <stddef.h>
+extern const char *lib_extension;
 
 so_handle load_lib     (const char *name);
 so_handle lazy_load_lib(const char *name);
