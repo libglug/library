@@ -22,6 +22,12 @@ target_link_libraries(
     CUnit
     ${TESTED_LIB}
 )
+set_target_properties(
+    integration
+    PROPERTIES
+        INSTALL_RPATH "$ORIGIN"
+        BUILD_WITH_INSTALL_RPATH TRUE
+)
 add_test(integration integration)
 
 # unit tests
