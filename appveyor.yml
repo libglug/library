@@ -1,0 +1,62 @@
+image:
+  - Visual Studio 2017
+  - Ubuntu
+
+platform:
+  - x64
+
+configuration:
+  - Release
+
+environment:
+  checkout_key:
+    secure: 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
+
+  matrix:
+    - ID: msvc 2017
+      GENERATOR: Visual Studio 15 2017 Win64
+    - ID: mingw
+      GENERATOR: MinGW Makefiles
+      MAKE_PATH: c:\msys64\mingw64\bin
+    - ID: gcc
+      GENERATOR: Unix Makefiles
+
+matrix:
+  exclude:
+    - image: Visual Studio 2017
+      ID: gcc
+    - image: Ubuntu
+      ID: mingw
+    - image: Ubuntu
+      ID: msvc 2017
+
+init:
+  - cmd: echo -----BEGIN RSA PRIVATE KEY----- > %USERPROFILE%\.ssh\id_rsa
+  - cmd: echo %checkout_key% >> %USERPROFILE%\.ssh\id_rsa
+  - cmd: echo -----END RSA PRIVATE KEY----- >> %USERPROFILE%\.ssh\id_rsa
+
+  - sh: if [ ! -d ~/.ssh ]; then mkdir ~/.ssh; fi
+  - sh: echo -----BEGIN RSA PRIVATE KEY----- > ~/.ssh/id_rsa
+  - sh: echo $checkout_key >> ~/.ssh/id_rsa
+  - sh: echo -----END RSA PRIVATE KEY----- >> ~/.ssh/id_rsa
+  - sh: chmod 600 ~/.ssh/id_rsa
+  - sh: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+
+install:
+  - git submodule update --init --recursive
+
+before_build:
+  # http://help.appveyor.com/discussions/problems/3193-cmake-building-for-mingw-issue-with-git-shexe
+  - cmd: set PATH=%PATH:C:\Program Files\Git\usr\bin;=%
+  - cmd: set PATH=%MAKE_PATH%;%PATH%
+
+build_script:
+  - mkdir build && cd build
+  - cmd: cmake -G"%GENERATOR%" ..
+  - sh: cmake -G"$GENERATOR" ..
+
+before_test:
+  - cmake --build . --target check
+
+test_script:
+  - ctest -V

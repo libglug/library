@@ -33,7 +33,7 @@ void test_load(void)
 
 void test_getproc(void)
 {
-    void *(*proc)(void) = NULL;
+    generic_fcn proc = NULL;
     struct glug_library_t *lib = glug_lib_lazy("testlib2");
     CU_ASSERT_FALSE(glug_lib_is_loaded(lib));
 

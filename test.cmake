@@ -1,9 +1,10 @@
 enable_testing()
-add_subdirectory(test/CUnit/CUnit)
+add_subdirectory(test/CUnit/CUnit EXCLUDE_FROM_ALL)
 include(test/add_unit_test.cmake)
 
 # integration test
 set(TESTED_LIB glug_library)
+find_package(${TESTED_LIB} REQUIRED)
 add_executable(
     integration
     test/integration/main.c
@@ -16,7 +17,6 @@ target_include_directories(
         glug_library/include
 )
 
-find_package(${TESTED_LIB} REQUIRED)
 target_link_libraries(
     integration
     CUnit
@@ -38,7 +38,7 @@ list(
 )
 add_unit_test(
     TARGET
-        makefilename
+        unit-makefilename
     SOURCES
         test/unit/makefilename.c
         glug_library/src/library.c
@@ -47,7 +47,7 @@ add_unit_test(
 
 add_unit_test(
     TARGET
-        loadlibs
+        unit-loadlibs
     SOURCES
         test/unit/loading.c
         glug_library/src/library.c
@@ -56,7 +56,7 @@ add_unit_test(
 
 add_unit_test(
     TARGET
-        symbols
+        unit-symbols
     SOURCES
         test/unit/symbols.c
         glug_library/src/library.c
@@ -67,19 +67,9 @@ add_unit_test(
 # (bug in CMake? (https://gitlab.kitware.com/cmake/cmake/issues/8774))
 add_custom_target(
     check
-    COMMAND
-        ${CMAKE_CTEST_COMMAND}
     DEPENDS
-        integration makefilename loadlibs symbols ${TESTED_LIB} # add other tests executables here
-)
-
-# copy the executable to this build directory (MSVC likes to hide it in Debug/Release folders)
-add_custom_command(
-    TARGET
-        check POST_BUILD
-    COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different
-            $<TARGET_FILE:integration> ${CMAKE_CURRENT_BINARY_DIR}
+        # add other tests executables here
+        CUnit integration unit-makefilename unit-loadlibs unit-symbols ${TESTED_LIB}
 )
 
 # copy the CUnit library to the same directory
@@ -91,15 +81,6 @@ add_custom_command(
             $<TARGET_FILE:CUnit> ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-# also copy the library to the same directory
-add_custom_command(
-    TARGET
-        check POST_BUILD
-    COMMAND
-        ${CMAKE_COMMAND} -E copy
-            $<TARGET_FILE:${TESTED_LIB}> ${CMAKE_CURRENT_BINARY_DIR}
-)
-
 # copy the libraries used in the integration tests
 list(
     APPEND
@@ -108,10 +89,11 @@ list(
     test/integration/hello.dylib
     test/integration/hello.so
 )
+
 foreach(TEST_LIB ${TEST_LIBS})
     add_custom_command(
         TARGET
-            integration POST_BUILD
+            check POST_BUILD
         COMMAND
             ${CMAKE_COMMAND} -E copy
                 ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_LIB} ${CMAKE_CURRENT_BINARY_DIR}

@@ -1,6 +1,7 @@
 #include <glug/library/handle.h>
 #include "libs.mock.h"
-#include "libs.mock.h"
+
+#include <string.h>
 
 library_info libraries[LIB_COUNT] = {
     {

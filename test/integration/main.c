@@ -42,6 +42,7 @@ void test_load_hello(void)
     namelen = glug_lib_soname(NULL, 0, libhello);
     lib_soname = malloc(namelen * sizeof(char));
     glug_lib_soname(lib_soname, namelen, libhello);
+    printf("soname: %s\n", lib_soname);
     CU_ASSERT_EQUAL(strncmp(lib_soname, "hello", 5), 0);
 
     // getting proc should load the library
