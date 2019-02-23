@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0054 NEW)
-project(glug_library)
+project(glug_library_suite)
 
 set(GLUG_LIB_TARGET glug_library)
 option(BUILD_XMPLS "Build (and install) the examples")

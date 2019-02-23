@@ -1,16 +1,12 @@
 # create simple example with simple dependencies
 function (add_example)
-    set(OPTIONS USE_WINMAIN USE_WHOLE_ARCHIVE)
-    set(SINGLE_VALS TARGET_NAME LINK_LIB)
+    set(OPTIONS USE_WINMAIN)
+    set(SINGLE_VALS TARGET_NAME LINK_LIB INSTALL_PATH)
     set(MULTI_VALS SRCS)
     cmake_parse_arguments(GLUG "${OPTIONS}" "${SINGLE_VALS}" "${MULTI_VALS}" ${ARGN})
 
     if (${GLUG_USE_WINMAIN})
         set(PLATFORM WIN32)
-    endif()
-
-    if (${GLUG_USE_WHOLE_ARCHIVE})
-        set(GLUG_LINK_LIB -Wl,--whole-archive ${GLUG_LINK_LIB} -Wl,--no-whole-archive)
     endif()
 
     set(GLUG_XMPL_NAME ${GLUG_TARGET_NAME})
@@ -21,8 +17,15 @@ function (add_example)
     set_target_properties(
         ${GLUG_XMPL_NAME}
         PROPERTIES
-            INSTALL_RPATH "$ORIGIN"
+            INSTALL_RPATH "$ORIGIN;@loader_path"
             BUILD_WITH_INSTALL_RPATH TRUE
+    )
+
+    install(
+        TARGETS
+            ${GLUG_XMPL_NAME}
+        DESTINATION
+            ${GLUG_INSTALL_PATH}
     )
 
 endfunction()

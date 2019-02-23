@@ -15,6 +15,8 @@ add_example(
         main.c
     LINK_LIB
         ${LIB}
+    INSTALL_PATH
+        ${INSTALL_PATH}
 )
 
 add_example(
@@ -24,6 +26,8 @@ add_example(
         main.cpp
     LINK_LIB
         ${LIB}
+    INSTALL_PATH
+        ${INSTALL_PATH}
 )
 
 # create of test libs to copy to the build dir
@@ -45,20 +49,6 @@ foreach(TEST_LIB ${TEST_LIBS})
                 ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_LIB} ${CMAKE_CURRENT_BINARY_DIR}
     )
 endforeach()
-
-install(
-    TARGETS
-        ${GLUG_TARGET_NAME}
-    DESTINATION
-        ${INSTALL_PATH}
-)
-
-install(
-    TARGETS
-        ${GLUG_TARGET_NAME++}
-    DESTINATION
-        ${INSTALL_PATH}
-)
 
 install(
     FILES

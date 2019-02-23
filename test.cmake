@@ -25,7 +25,7 @@ target_link_libraries(
 set_target_properties(
     integration
     PROPERTIES
-        INSTALL_RPATH "$ORIGIN"
+        INSTALL_RPATH "$ORIGIN;@loader_path"
         BUILD_WITH_INSTALL_RPATH TRUE
 )
 add_test(integration integration)
