@@ -4,6 +4,11 @@
 
 #include "../create_suite.h"
 
+const char *lib_extension()
+{
+    return ".ext";
+}
+
 void test_empty_symbols(void)
 {
     size_t count = (size_t)-1;

@@ -49,10 +49,3 @@ foreach(TEST_LIB ${TEST_LIBS})
                 ${CMAKE_CURRENT_SOURCE_DIR}/${TEST_LIB} ${CMAKE_CURRENT_BINARY_DIR}
     )
 endforeach()
-
-install(
-    FILES
-        ${TEST_LIBS}
-    DESTINATION
-        ${INSTALL_PATH}
-)

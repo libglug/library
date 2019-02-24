@@ -6,20 +6,24 @@
 
 #include "../create_suite.h"
 
-const char *lib_extension;
+static char *extension;
+const char *lib_extension()
+{
+    return ".ext";
+}
 
 void before_each(void)
 {
-    lib_extension = ".ext";
+    extension = ".ext";
 }
 
 void make_filename(void)
 {
     char filename[100], exp[100] = {0};
     size_t count = 0, expcount;
-    lib_extension = ".libext";
+    extension = ".libext";
     strcat(exp, "testlib");
-    strcat(exp, lib_extension);
+    strcat(exp, lib_extension());
     expcount = strlen(exp) + 1; // counts trailing null
     count = glug_lib_make_filename(filename, "testlib", 100);
 
@@ -31,7 +35,7 @@ void filename_len(void)
 {
     size_t count = 0, exp;
     exp = strlen("testing");
-    exp += strlen(lib_extension);
+    exp += strlen(lib_extension());
     exp += 1; // trailing null is counted
 
     count = glug_lib_make_filename(NULL, "testing", 0);

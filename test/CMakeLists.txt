@@ -40,7 +40,6 @@ list(
     MOCKS
     ${MOCK_DIR}/libs.mock.c
     ${MOCK_DIR}/libs.mock.h
-    ${MOCK_DIR}/extension.mock.c
     ${MOCK_DIR}/load.mock.c
     ${MOCK_DIR}/soname.mock.c
     ${MOCK_DIR}/symbols.mock.c
@@ -90,7 +89,8 @@ add_unit_test(
 # create a custom target which builds tests and their dependencies
 # (bug in CMake? (https://gitlab.kitware.com/cmake/cmake/issues/8774))
 add_custom_target(
-    check ALL
+    check
+    ALL
     DEPENDS
         # add other tests executables here
         CUnit integration unit-makefilename unit-loadlibs unit-symbols ${TESTED_LIB}
@@ -103,6 +103,15 @@ add_custom_command(
     COMMAND
         ${CMAKE_COMMAND} -E copy
             $<TARGET_FILE:CUnit> ${CMAKE_CURRENT_BINARY_DIR}
+)
+
+# copy the target lib for integration tests
+add_custom_command(
+    TARGET
+        integration POST_BUILD
+    COMMAND
+        ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:${TESTED_LIB}> ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 # copy the libraries used in the integration tests

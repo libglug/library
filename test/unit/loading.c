@@ -4,6 +4,11 @@
 
 #include "../create_suite.h"
 
+const char *lib_extension()
+{
+    return ".ext";
+}
+
 void test_libs_exist(void)
 {
     int exists = glug_lib_exists("library1");

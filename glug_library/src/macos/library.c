@@ -10,8 +10,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-const char *lib_extension = ".dylib";
-
 #if defined(__LP64__)
     typedef struct mach_header_64 mach_header_t;
     typedef struct segment_command_64 segment_command_t;
@@ -69,6 +67,11 @@ static int find_id_dylib(struct load_command *cmd, const uint8_t *pcmd, const ui
     }
 
     return 0;
+}
+
+const char *lib_extension()
+{
+    return ".dylib";
 }
 
 size_t lib_soname(char *dst, size_t count, const so_handle so)

@@ -8,8 +8,6 @@
 
 #include <stdlib.h>
 
-const char *lib_extension = ".dll";
-
 static int get_exports(const so_handle so, PBYTE *base, IMAGE_EXPORT_DIRECTORY *exp)
 {
     IMAGE_DOS_HEADER *doshdr;
@@ -45,6 +43,11 @@ static int get_exports(const so_handle so, PBYTE *base, IMAGE_EXPORT_DIRECTORY *
     memcpy(exp, *base + exprva, sizeof(IMAGE_EXPORT_DIRECTORY));
 
     return 0;
+}
+
+const char *lib_extension()
+{
+    return ".dll";
 }
 
 so_handle load_lib(const char *name)

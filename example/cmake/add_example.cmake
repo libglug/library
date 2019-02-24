@@ -9,23 +9,14 @@ function (add_example)
         set(PLATFORM WIN32)
     endif()
 
-    set(GLUG_XMPL_NAME ${GLUG_TARGET_NAME})
-
-    add_executable(${GLUG_XMPL_NAME} ${PLATFORM} ${GLUG_SRCS})
-    target_link_libraries(${GLUG_XMPL_NAME} ${GLUG_LINK_LIB})
+    add_executable(${GLUG_TARGET_NAME} ${PLATFORM} ${GLUG_SRCS})
+    target_link_libraries(${GLUG_TARGET_NAME} ${GLUG_LINK_LIB})
 
     set_target_properties(
-        ${GLUG_XMPL_NAME}
+        ${GLUG_TARGET_NAME}
         PROPERTIES
             INSTALL_RPATH "$ORIGIN;@loader_path"
             BUILD_WITH_INSTALL_RPATH TRUE
-    )
-
-    install(
-        TARGETS
-            ${GLUG_XMPL_NAME}
-        DESTINATION
-            ${GLUG_INSTALL_PATH}
     )
 
 endfunction()

@@ -6,6 +6,8 @@ set(VER_PATCH 0)
 project(glug_library VERSION ${VER_MAJOR}.${VER_MINOR}.${VER_PATCH})
 include(cmake/add_gluglib.cmake)
 
+option(BUILD_STATIC "Build as a static library?" OFF)
+
 set(SRC_ROOT src)
 set(INC_ROOT include/glug)
 
@@ -48,8 +50,8 @@ list(
 )
 
 add_gluglib(
-    TARGET_NAME ${PROJECT_NAME}
-    STATIC_BUILD TRUE
+    TARGET_NAME  ${PROJECT_NAME}
+    STATIC_BUILD ${BUILD_STATIC}
     WIN32_SOURCE ${WIN32_SOURCE}
     MACOS_SOURCE ${MACOS_SOURCE}
     LINUX_SOURCE ${LINUX_SOURCE}

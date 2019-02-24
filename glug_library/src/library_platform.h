@@ -1,16 +1,16 @@
 #ifndef GLUG_LIBRARY_PLATFORM_H
 #define GLUG_LIBRARY_PLATFORM_H
 
+#include <glug/import.h>
 #include <glug/library/handle.h>
 
 #include <stddef.h>
-extern const char *lib_extension;
-
-so_handle load_lib     (const char *name);
-so_handle lazy_load_lib(const char *name);
-size_t    lib_soname   (char *dst, size_t count, const so_handle so);
-void *    get_lib_proc (const so_handle so, const char *name);
-char **   lib_symbols  (const so_handle so, size_t *count);
-void      free_lib     (so_handle so);
+GLUG_LIB_LOCAL const char * lib_extension();
+GLUG_LIB_LOCAL so_handle    load_lib     (const char *name);
+GLUG_LIB_LOCAL so_handle    lazy_load_lib(const char *name);
+GLUG_LIB_LOCAL size_t       lib_soname   (char *dst, size_t count, const so_handle so);
+GLUG_LIB_LOCAL void *       get_lib_proc (const so_handle so, const char *name);
+GLUG_LIB_LOCAL char **      lib_symbols  (const so_handle so, size_t *count);
+GLUG_LIB_LOCAL void         free_lib     (so_handle so);
 
 #endif // GLUG_LIBRARY_PLATFORM_H

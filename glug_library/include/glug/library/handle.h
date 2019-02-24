@@ -1,6 +1,7 @@
 #ifndef GLUG_LIB_HANDLE_H
 #define GLUG_LIB_HANDLE_H
 
+#include <glug/import.h>
 #include <glug/extern.h>
 #include <glug/os.h>
 
@@ -20,7 +21,7 @@ GLUG_EXTERN_START
 
 #endif
 
-so_handle lib_handle(const struct glug_library_t *lib);
+GLUG_LIB_API so_handle lib_handle(const struct glug_library_t *lib);
 
 GLUG_EXTERN_END
 

@@ -9,8 +9,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char *lib_extension = ".so";
-
 static const ElfW(Dyn) *get_tag(const ElfW(Dyn) *dyn, const ElfW(Sxword) tag)
 {
     for (const ElfW(Dyn) *entry = dyn; entry->d_tag != DT_NULL; ++entry)
@@ -18,6 +16,11 @@ static const ElfW(Dyn) *get_tag(const ElfW(Dyn) *dyn, const ElfW(Sxword) tag)
             return entry;
 
     return NULL;
+}
+
+const char *lib_extension()
+{
+    return ".so";
 }
 
 size_t lib_soname(char *dst, size_t count, const so_handle so)

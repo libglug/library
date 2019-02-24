@@ -3,8 +3,8 @@ cmake_policy(SET CMP0054 NEW)
 project(glug_library_suite)
 
 set(GLUG_LIB_TARGET glug_library)
-option(BUILD_XMPLS "Build the examples?")
-option(BUILD_TESTS "Build tests?")
+option(BUILD_XMPLS "Build the examples?" OFF)
+option(BUILD_TESTS "Build tests?" OFF)
 
 # disable find_package in any subproject for finding this lib
 macro(find_package)
@@ -40,7 +40,6 @@ if (${BUILD_XMPLS} STREQUAL "ON")
     endif()
 
 endif()
-
 
 if (${BUILD_TESTS})
     enable_testing()
