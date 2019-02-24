@@ -2,7 +2,7 @@
 #include <CUnit/Basic.h>
 #include <CUnit/Assert.h>
 
-#include "create_suite.h"
+#include "../create_suite.h"
 
 void test_libs_exist(void)
 {
@@ -53,7 +53,6 @@ void test_getproc(void)
 
 int main(void)
 {
-    int failures = 0;
     CU_pSuite suite = create_suite("load libraries", NULL, NULL);
     if (!suite) return CU_get_error();
 
@@ -61,8 +60,5 @@ int main(void)
     CU_add_test(suite, "load libs", test_load);
     CU_add_test(suite, "load lib when getting proc", test_getproc);
 
-    failures = run_tests(CU_BRM_VERBOSE);
-    CU_cleanup_registry();
-
-    return failures;
+    return run_tests(CU_BRM_VERBOSE);
 }

@@ -2,7 +2,7 @@
 #include <CUnit/Basic.h>
 #include <CUnit/Assert.h>
 
-#include "create_suite.h"
+#include "../create_suite.h"
 
 void test_empty_symbols(void)
 {
@@ -32,15 +32,11 @@ void test_lib_symbols(void)
 
 int main(void)
 {
-    int failures = 0;
     CU_pSuite suite = create_suite("library symbols", NULL, NULL);
     if (!suite) return CU_get_error();
 
     CU_add_test(suite, "empty symbol list", test_empty_symbols);
     CU_add_test(suite, "get symbol list", test_lib_symbols);
 
-    failures = run_tests(CU_BRM_VERBOSE);
-    CU_cleanup_registry();
-
-    return failures;
+    return run_tests(CU_BRM_VERBOSE);
 }

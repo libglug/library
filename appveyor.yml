@@ -52,8 +52,8 @@ before_build:
 
 build_script:
   - mkdir build && cd build
-  - cmd: cmake -G"%GENERATOR%" ..
-  - sh: cmake -G"$GENERATOR" ..
+  - cmd: cmake -G"%GENERATOR%" -DBUILD_TESTS=ON ..
+  - sh: cmake -G"$GENERATOR" -DBUILD_TESTS=ON ..
 
 before_test:
   - cmake --build . --target check

@@ -1,37 +1,40 @@
-enable_testing()
-add_subdirectory(test/CUnit/CUnit EXCLUDE_FROM_ALL)
-include(test/add_unit_test.cmake)
+add_subdirectory(CUnit/CUnit EXCLUDE_FROM_ALL)
+include(add_int_test.cmake)
+include(add_unit_test.cmake)
+
+set(SRC_ROOT ../glug_library)
+
+list(
+    APPEND
+    INCLUDE_DIRS
+    CUnit/CUnit/include
+    ${SRC_ROOT}/common_headers/include
+    ${SRC_ROOT}/include
+)
 
 # integration test
 set(TESTED_LIB glug_library)
 find_package(${TESTED_LIB} REQUIRED)
-add_executable(
-    integration
-    test/integration/main.c
+add_int_test(
+    TARGETNAME
+        integration
+    SOURCES
+        integration/main.c
+        create_suite.h
+    INCLUDE_DIRS
+        ${INCLUDE_DIRS}
+    LINK_LIBS
+        CUnit
+        ${TESTED_LIB}
 )
-target_include_directories(
-    integration
-    PRIVATE
-        test/CUnit/CUnit/include
-        glug_library/common_headers/include
-        glug_library/include
-)
-
-target_link_libraries(
-    integration
-    CUnit
-    ${TESTED_LIB}
-)
-set_target_properties(
-    integration
-    PROPERTIES
-        INSTALL_RPATH "$ORIGIN;@loader_path"
-        BUILD_WITH_INSTALL_RPATH TRUE
-)
-add_test(integration integration)
 
 # unit tests
-set(MOCK_DIR test/unit/mocks)
+set(MOCK_DIR unit/mocks)
+list(
+    APPEND
+    INCLUDE_DIRS
+    ${SRC_ROOT}/src
+)
 list(
     APPEND
     MOCKS
@@ -43,36 +46,51 @@ list(
     ${MOCK_DIR}/symbols.mock.c
 )
 add_unit_test(
-    TARGET
+    TARGETNAME
         unit-makefilename
     SOURCES
-        test/unit/makefilename.c
-        glug_library/src/library.c
+        unit/makefilename.c
+        ${SRC_ROOT}/src/library.c
+        create_suite.h
         ${MOCKS}
+    INCLUDE_DIRS
+        ${INCLUDE_DIRS}
+    LINK_LIBS
+        CUnit
 )
 
 add_unit_test(
-    TARGET
+    TARGETNAME
         unit-loadlibs
     SOURCES
-        test/unit/loading.c
-        glug_library/src/library.c
+        unit/loading.c
+        ${SRC_ROOT}/src/library.c
+        create_suite.h
         ${MOCKS}
+    INCLUDE_DIRS
+        ${INCLUDE_DIRS}
+    LINK_LIBS
+        CUnit
 )
 
 add_unit_test(
-    TARGET
+    TARGETNAME
         unit-symbols
     SOURCES
-        test/unit/symbols.c
-        glug_library/src/library.c
+        unit/symbols.c
+        ${SRC_ROOT}/src/library.c
+        create_suite.h
         ${MOCKS}
+    INCLUDE_DIRS
+        ${INCLUDE_DIRS}
+    LINK_LIBS
+        CUnit
 )
 
 # create a custom target which builds tests and their dependencies
 # (bug in CMake? (https://gitlab.kitware.com/cmake/cmake/issues/8774))
 add_custom_target(
-    check
+    check ALL
     DEPENDS
         # add other tests executables here
         CUnit integration unit-makefilename unit-loadlibs unit-symbols ${TESTED_LIB}
@@ -91,9 +109,9 @@ add_custom_command(
 list(
     APPEND
     TEST_LIBS
-    test/integration/hello.dll
-    test/integration/hello.dylib
-    test/integration/hello.so
+    integration/hello.dll
+    integration/hello.dylib
+    integration/hello.so
 )
 
 foreach(TEST_LIB ${TEST_LIBS})

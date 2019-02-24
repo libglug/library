@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "../create_suite.h"
+
 typedef_func(say, void, const char *);
 
 void test_load_hello(void)
@@ -57,21 +59,10 @@ void test_load_hello(void)
 
 int main()
 {
-    unsigned int failures;
-    CU_pSuite test_suite;
-    /* initialize the CUnit test registry */
-    if (CU_initialize_registry() != CUE_SUCCESS)
-        return CU_get_error();
+    CU_pSuite suite = create_suite("load libraries", NULL, NULL);
+    if (!suite) return CU_get_error();
 
-    /* add suites to the registry */
-    test_suite = CU_add_suite("test testing", NULL, NULL);
-    if (test_suite == NULL)
-    {
-       CU_cleanup_registry();
-       return CU_get_error();
-    }
-
-    CU_add_test(test_suite, "load and iterate \"hello\"", test_load_hello);
+    CU_add_test(suite, "load and iterate \"hello\"", test_load_hello);
 
     /* Run all tests using the console interface */
     CU_basic_set_mode(CU_BRM_VERBOSE);
@@ -81,7 +72,5 @@ int main()
         return CU_get_error();
     }
 
-    failures = CU_get_number_of_tests_failed();
-    CU_cleanup_registry();
-    return (int)failures;
+    return run_tests(CU_BRM_VERBOSE);
 }

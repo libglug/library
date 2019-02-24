@@ -4,7 +4,7 @@
 
 #include <string.h>
 
-#include "create_suite.h"
+#include "../create_suite.h"
 
 const char *lib_extension;
 
@@ -49,7 +49,6 @@ void lacking_space(void)
 
 int main(void)
 {
-    int failures = 0;
     CU_pSuite suite = create_suite("make_filename", before_each, NULL);
     if (!suite) return CU_get_error();
 
@@ -57,8 +56,5 @@ int main(void)
     CU_add_test(suite, "get filename length", filename_len);
     CU_add_test(suite, "create filename in too small buffer", lacking_space);
 
-    failures = run_tests(CU_BRM_VERBOSE);
-    CU_cleanup_registry();
-
-    return failures;
+    return run_tests(CU_BRM_VERBOSE);
 }
