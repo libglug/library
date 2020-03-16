@@ -9,7 +9,7 @@
 #define MAX(x, y) (x) > (y) ? (x) : (y)
 #define MIN(x, y) (x) < (y) ? (x) : (y)
 
-static void load_lazy_lib(struct glug_library_t *lib)
+static void load_lazy_lib(struct glug_library *lib)
 {
     free_lib(lib->dl);
     lib->dl = load_lib(lib->name);
@@ -44,15 +44,15 @@ int glug_lib_exists(const char *name)
     return dl != NULL;
 }
 
-size_t glug_lib_soname(char *dst, size_t count, const struct glug_library_t *lib)
+size_t glug_lib_soname(char *dst, size_t count, const struct glug_library *lib)
 {
     return lib_soname(dst, count, lib->dl);
 }
 
-static struct glug_library_t *make_struct(const char *name, int loaded, so_handle dl)
+static struct glug_library *make_struct(const char *name, int loaded, so_handle dl)
 {
     size_t name_len = strlen(name);
-    struct glug_library_t *l = malloc(sizeof(struct glug_library_t));
+    struct glug_library *l = malloc(sizeof(struct glug_library));
     l->name = malloc(name_len + 1);
     strncpy(l->name, name, name_len + 1);
     l->loaded = loaded;
@@ -60,7 +60,7 @@ static struct glug_library_t *make_struct(const char *name, int loaded, so_handl
     return l;
 }
 
-struct glug_library_t *glug_lib_load(const char *name)
+struct glug_library *glug_lib_load(const char *name)
 {
     so_handle dl = load_lib(name);
     if (!dl) return NULL;
@@ -68,7 +68,7 @@ struct glug_library_t *glug_lib_load(const char *name)
     return make_struct(name, 1, dl);
 }
 
-struct glug_library_t *glug_lib_lazy(const char *name)
+struct glug_library *glug_lib_lazy(const char *name)
 {
     so_handle dl = lazy_load_lib(name);
     if (!dl) return NULL;
@@ -76,7 +76,7 @@ struct glug_library_t *glug_lib_lazy(const char *name)
     return make_struct(name, 0, dl);
 }
 
-void glug_lib_free(struct glug_library_t *lib)
+void glug_lib_free(struct glug_library *lib)
 {
     if (lib)
     {
@@ -86,28 +86,28 @@ void glug_lib_free(struct glug_library_t *lib)
     }
 }
 
-int glug_lib_is_loaded(const struct glug_library_t *lib)
+int glug_lib_is_loaded(const struct glug_library *lib)
 {
     return lib && lib->loaded;
 }
 
-int glug_lib_has_proc(const struct glug_library_t *lib, const char *proc)
+int glug_lib_has_proc(const struct glug_library *lib, const char *proc)
 {
     return glug_lib_proc(lib, proc) != NULL;
 }
 
-generic_fcn glug_lib_proc(const struct glug_library_t *lib, const char *proc)
+generic_fcn glug_lib_proc(const struct glug_library *lib, const char *proc)
 {
     if (!lib)
         return NULL;
 
     if (!lib->loaded)
-        load_lazy_lib((struct glug_library_t *)lib);
+        load_lazy_lib((struct glug_library *)lib);
 
     return (generic_fcn)get_lib_proc(lib->dl, proc);
 }
 
-char **glug_lib_symbols(const struct glug_library_t *lib, size_t *count)
+char **glug_lib_symbols(const struct glug_library *lib, size_t *count)
 {
     size_t nsymbols = 0;
     char **symbols = lib_symbols(lib->dl, &nsymbols);
@@ -132,13 +132,13 @@ char **glug_lib_free_symbols(char **symbol_list)
     return NULL;
 }
 
-so_handle lib_handle(const struct glug_library_t *lib)
+so_handle lib_handle(const struct glug_library *lib)
 {
     if (!lib)
         return NULL;
 
     if (!lib->loaded)
-        load_lazy_lib((struct glug_library_t *)lib);
+        load_lazy_lib((struct glug_library *)lib);
 
     return lib->dl;
 }

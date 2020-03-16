@@ -1,5 +1,5 @@
 #include <glug/library/library.h>
-#include <glug/library/typedef_func.h>
+#include <glug/library/func_t.h>
 
 #include <CUnit/Assert.h>
 #include <CUnit/Basic.h>
@@ -19,7 +19,7 @@ void test_load_hello(void)
     size_t full_len = glug_lib_make_filename(NULL, lib_name, 0);
     char **hello_symbols;
     size_t symbols = 0, namelen = 0;
-    struct glug_library_t *libhello;
+    struct glug_library *libhello;
     say say_hello;
 
     full_name = malloc(full_len);

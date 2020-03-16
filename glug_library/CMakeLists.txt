@@ -14,10 +14,10 @@ set(INC_ROOT include/glug)
 list(
     APPEND
     COMMON_SOURCE
+    ${INC_ROOT}/library/func_t.h
     ${INC_ROOT}/library/handle.h
     ${INC_ROOT}/library/library.h
     ${INC_ROOT}/library/library_t.h
-    ${INC_ROOT}/library/typedef_func.h
     ${SRC_ROOT}/library_t.h
     ${SRC_ROOT}/library.c
     ${SRC_ROOT}/library_platform.h
