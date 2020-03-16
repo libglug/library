@@ -1,5 +1,5 @@
 #include <glug/library/library.h>
-#include <glug/library/typedef_func.h>
+#include <glug/library/func_t.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,7 +26,7 @@ int main()
         say say_hello;
         size_t namelen = 0;
         char *lib_soname;
-        struct glug_library_t *libhello = glug_lib_lazy(full_name);
+        struct glug_library *libhello = glug_lib_lazy(full_name);
         char **psym, **hello_symbols = glug_lib_symbols(libhello, &symbols);
 
         // get lib name length and malloc big enough buffer (w/ trailing NULL)

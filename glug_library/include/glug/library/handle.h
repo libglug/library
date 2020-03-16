@@ -17,11 +17,11 @@ GLUG_EXTERN_START
 
 #elif defined(GLUG_OS_LIN) || defined(GLUG_OS_MAC)
 
-    typedef void* so_handle;
+    typedef void *so_handle;
 
 #endif
 
-GLUG_LIB_API so_handle lib_handle(const struct glug_library_t *lib);
+GLUG_LIB_API so_handle lib_handle(const struct glug_library *lib);
 
 GLUG_EXTERN_END
 

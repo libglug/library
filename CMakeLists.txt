@@ -1,10 +1,13 @@
 cmake_minimum_required(VERSION 3.0)
 cmake_policy(SET CMP0054 NEW)
-project(glug_library_suite)
+project(
+    glug_library_suite
+    LANGUAGES C
+)
 
 set(GLUG_LIB_TARGET glug_library)
-option(BUILD_XMPLS "Build the examples?" OFF)
-option(BUILD_TESTS "Build tests?" OFF)
+option(BUILD_XMPLS "Build the examples?")
+option(BUILD_TESTS "Build tests?")
 
 # disable find_package in any subproject for finding this lib
 macro(find_package)
@@ -41,7 +44,7 @@ if (${BUILD_XMPLS} STREQUAL "ON")
 
 endif()
 
-if (${BUILD_TESTS})
+if (${BUILD_TESTS} STREQUAL "ON")
     enable_testing()
     add_subdirectory(test)
 endif()

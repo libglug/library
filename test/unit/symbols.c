@@ -12,7 +12,7 @@ const char *lib_extension()
 void test_empty_symbols(void)
 {
     size_t count = (size_t)-1;
-    struct glug_library_t *lib = glug_lib_load("empty");
+    struct glug_library *lib = glug_lib_load("empty");
     char **syms;
     CU_ASSERT_PTR_NOT_NULL(lib);
 
@@ -26,7 +26,7 @@ void test_empty_symbols(void)
 void test_lib_symbols(void)
 {
     size_t count = (size_t)-1;
-    struct glug_library_t *lib = glug_lib_load("testlib1");
+    struct glug_library *lib = glug_lib_load("testlib1");
     char **syms = glug_lib_symbols(lib, &count);
 
     CU_ASSERT_EQUAL(count, 2);
