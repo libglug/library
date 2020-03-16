@@ -9,19 +9,17 @@ typedef_func(say, void, const char *);
 
 int main()
 {
-    const char *lib_name = "hello";
-    size_t full_len = glug_lib_make_filename(nullptr, lib_name, 0);
+    std::string full_name;
+    full_name += "hello";
+    full_name += glug_lib_extension();
 
-    char *full_name = new char[full_len]();
-    glug_lib_make_filename(full_name, lib_name, full_len);
-
-    bool is_lib = glug_lib_exists(full_name);
+    bool is_lib = glug_lib_exists(full_name.c_str());
     cout << full_name << ' ' << (is_lib ? "exists" : "doesn't exist") << endl;
 
     if (is_lib)
     {
         size_t symbols = 0;
-        struct glug_library *libhello = glug_lib_lazy(full_name);
+        struct glug_library *libhello = glug_lib_lazy(full_name.c_str());
         char **psym, **hello_symbols = glug_lib_symbols(libhello, &symbols);
 
         // get lib name length and malloc big enough buffer (w/ trailing NULL)
@@ -43,6 +41,5 @@ int main()
         glug_lib_free(libhello);
     }
 
-    delete[] full_name;
     return 0;
 }

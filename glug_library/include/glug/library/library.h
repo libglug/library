@@ -12,9 +12,8 @@
 typedef_func(generic_fcn, void *, void);
 
 GLUG_EXTERN_START
-GLUG_LIB_API const char *           glug_lib_extension();
+GLUG_LIB_API const char *           glug_lib_extension(void);
 
-GLUG_LIB_API size_t                 glug_lib_make_filename(char *dst, const char *name, size_t count);
 GLUG_LIB_API int                    glug_lib_exists(const char *name);
 GLUG_LIB_API size_t                 glug_lib_soname(char *dst, size_t count, const struct glug_library *lib);
 

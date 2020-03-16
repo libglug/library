@@ -6,9 +6,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define MAX(x, y) (x) > (y) ? (x) : (y)
-#define MIN(x, y) (x) < (y) ? (x) : (y)
-
 static void load_lazy_lib(struct glug_library *lib)
 {
     free_lib(lib->dl);
@@ -19,20 +16,6 @@ static void load_lazy_lib(struct glug_library *lib)
 const char *glug_lib_extension()
 {
     return lib_extension();
-}
-
-size_t glug_lib_make_filename(char *dst, const char *name, size_t count)
-{
-    size_t maxchar = count;
-    const size_t ext_len = strlen(lib_extension());
-    const size_t name_len = strlen(name);
-    maxchar = MIN(maxchar, name_len + strlen(lib_extension()) + 1);
-
-    strncpy(dst, name, MAX(count, 0));
-    count -= MIN(name_len, count);
-    strncpy(dst + name_len, lib_extension(), count);
-    if (maxchar) dst[maxchar - 1] = '\0'; // mark the last byte as NULL, in case the other strings don't fit
-    return name_len + ext_len + 1; // account for the trailing NULL
 }
 
 int glug_lib_exists(const char *name)

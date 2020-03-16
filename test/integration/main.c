@@ -11,19 +11,32 @@
 
 typedef_func(say, void, const char *);
 
+char *make_filename(const char *lib_name)
+{
+    const char *extension = glug_lib_extension();
+    const size_t ext_len = strlen(extension);
+    const size_t name_len = strlen(lib_name);
+    const size_t full_len = ext_len + name_len + 1;
+    char *full_name = malloc(ext_len + name_len + 1);
+
+    strncpy(full_name, lib_name, name_len);
+    strncpy(full_name + name_len, extension, ext_len);
+    full_name[full_len - 1] = '\0';
+
+    return full_name;
+}
+
 void test_load_hello(void)
 {
     const char *lib_name = "hello";
     int is_lib = 0;
-    char *full_name, *lib_soname;
-    size_t full_len = glug_lib_make_filename(NULL, lib_name, 0);
+    char *lib_soname;
+    char *full_name = make_filename(lib_name);
     char **hello_symbols;
     size_t symbols = 0, namelen = 0;
     struct glug_library *libhello;
     say say_hello;
 
-    full_name = malloc(full_len);
-    glug_lib_make_filename(full_name, lib_name, full_len);
     CU_ASSERT_TRUE(!strncmp(full_name, lib_name, 5)); // compare the file name w/o extension
 
     // lib should exist
