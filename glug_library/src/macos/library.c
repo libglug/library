@@ -3,7 +3,6 @@
 #include <mach-o/nlist.h>
 
 #include "../library_platform.h"
-#include "../library_t.h"
 #include <glug/library/library.h>
 #include <glug/library/handle.h>
 
@@ -18,13 +17,13 @@
     typedef struct segment_command segment_command_t;
 #endif
 
-typedef int (*cmd_enum_callback)(struct load_command *, const uint8_t *pcmd, void *);
+typedef int (*cmd_enum_callback_t)(struct load_command *, const uint8_t *, void *);
 
-static uint32_t get_lib_index(const so_handle so)
+static uint32_t get_lib_index(const so_handle_t so)
 {
     for (uint32_t i = _dyld_image_count(); i--;)
     {
-        so_handle dl = dlopen(_dyld_get_image_name(i), RTLD_NOW);
+        so_handle_t dl = dlopen(_dyld_get_image_name(i), RTLD_NOW);
         dlclose(dl);
         if (dl == so)
             return i;
@@ -33,7 +32,7 @@ static uint32_t get_lib_index(const so_handle so)
     return (uint32_t)-1;
 }
 
-static const mach_header_t *get_lib_head(const so_handle so)
+static const mach_header_t *get_lib_head(const so_handle_t so)
 {
     uint32_t i = get_lib_index(so);
 
@@ -42,7 +41,7 @@ static const mach_header_t *get_lib_head(const so_handle so)
     return (const mach_header_t *)_dyld_get_image_header(i);
 }
 
-static void enumerate_commands(const mach_header_t *head, cmd_enum_callback cb, void *ctx)
+static void enumerate_commands(const mach_header_t *head, cmd_enum_callback_t cb, void *ctx)
 {
     struct load_command load_cmd;
     const uint8_t *pload_cmd;
@@ -74,7 +73,7 @@ const char *lib_extension()
     return ".dylib";
 }
 
-size_t lib_soname(char *dst, size_t count, const so_handle so)
+size_t lib_soname(char *dst, size_t count, const so_handle_t so)
 {
     const mach_header_t *head = get_lib_head(so);
     const uint8_t *pdylib = 0;
@@ -84,7 +83,7 @@ size_t lib_soname(char *dst, size_t count, const so_handle so)
     if (!head) return 0;
 
     // find the lib ident; if not, return early
-    enumerate_commands(head, (cmd_enum_callback)find_id_dylib, &pdylib);
+    enumerate_commands(head, (cmd_enum_callback_t)find_id_dylib, &pdylib);
     if (!pdylib) return 0;
 
     // copy out the dylib_command struct and then string
@@ -114,7 +113,7 @@ static int find_symbol_segments(struct load_command *cmd, const uint8_t *pcmd, c
     return 0;
 }
 
-char **lib_symbols(const so_handle so, size_t *count)
+char **lib_symbols(const so_handle_t so, size_t *count)
 {
     char **symbols = NULL;
     const mach_header_t *head = get_lib_head(so);
@@ -130,7 +129,7 @@ char **lib_symbols(const so_handle so, size_t *count)
     if (!head) return symbols;
 
     // find all the segments needed to parse symbol names
-    enumerate_commands(head, (cmd_enum_callback)find_symbol_segments, psegs);
+    enumerate_commands(head, (cmd_enum_callback_t)find_symbol_segments, psegs);
 
     // if we don't have all we need, early out
     if (!psymtab || !psegtext || !pseglink) return symbols;

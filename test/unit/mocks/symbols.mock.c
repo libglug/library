@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-char **lib_symbols(const so_handle so, size_t *count)
+char **lib_symbols(const so_handle_t so, size_t *count)
 {
     library_info *li = find_library_by_handle(so);
     char **syms;

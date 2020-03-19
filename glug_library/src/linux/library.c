@@ -23,7 +23,7 @@ const char *lib_extension()
     return ".so";
 }
 
-size_t lib_soname(char *dst, size_t count, const so_handle so)
+size_t lib_soname(char *dst, size_t count, const so_handle_t so)
 {
     struct link_map *map = (struct link_map*)so;
     ElfW(Dyn) *elf = map->l_ld;
@@ -44,7 +44,7 @@ static int is_public_fcn(const ElfW(Sym) *symbol, size_t maxoffset)
            symbol->st_name < maxoffset;                    // and have a string in the strtab
 }
 
-char **lib_symbols(const so_handle so, size_t *count)
+char **lib_symbols(const so_handle_t so, size_t *count)
 {
     char **symbols = NULL;
     struct link_map *map = (struct link_map*)so;

@@ -8,7 +8,7 @@ struct glug_library
 {
     char *name;
     int loaded;
-    so_handle dl;
+    so_handle_t dl;
 };
 
 #endif // GLUG_STRUCT_LIBRARY_T_H

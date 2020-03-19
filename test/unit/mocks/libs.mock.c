@@ -5,7 +5,7 @@
 
 library_info libraries[LIB_COUNT] = {
     {
-        (so_handle)0x911881c,
+        (so_handle_t)0x911881c,
         "testlib1",
         2,
         {
@@ -14,7 +14,7 @@ library_info libraries[LIB_COUNT] = {
         }
     },
     {
-        (so_handle)0x8a7fa08,
+        (so_handle_t)0x8a7fa08,
         "testlib2",
         1,
         {
@@ -22,7 +22,7 @@ library_info libraries[LIB_COUNT] = {
         }
     },
     {
-        (so_handle)0x3c77404,
+        (so_handle_t)0x3c77404,
         "opengl",
         2,
         {
@@ -31,7 +31,7 @@ library_info libraries[LIB_COUNT] = {
         }
     },
     {
-        (so_handle)0x2210b88,
+        (so_handle_t)0x2210b88,
         "empty",
         0,
         { { "", 0 } }
@@ -48,7 +48,7 @@ library_info *find_library_by_name(const char *name)
     return NULL;
 }
 
-library_info *find_library_by_handle(const so_handle handle)
+library_info *find_library_by_handle(const so_handle_t handle)
 {
     int i;
     for (i = 0; i < LIB_COUNT; ++i)
@@ -58,7 +58,7 @@ library_info *find_library_by_handle(const so_handle handle)
     return NULL;
 }
 
-void *find_library_symbol(const so_handle so, const char *name)
+void *find_library_symbol(const so_handle_t so, const char *name)
 {
     int i = 0;
     library_info *lib_info = find_library_by_handle(so);
