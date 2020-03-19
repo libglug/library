@@ -17,7 +17,7 @@
     typedef struct segment_command segment_command_t;
 #endif
 
-typedef int (*cmd_enum_callback_t)(struct load_command *, const uint8_t *, void *);
+typedef glug_bool (*cmd_enum_callback_t)(struct load_command *, const uint8_t *, void *);
 
 static uint32_t get_lib_index(const so_handle_t so)
 {
@@ -36,7 +36,7 @@ static const mach_header_t *get_lib_head(const so_handle_t so)
 {
     uint32_t i = get_lib_index(so);
 
-    if (i == (uint32_t)-1) return 0;
+    if (i == (uint32_t)-1) return NULL;
 
     return (const mach_header_t *)_dyld_get_image_header(i);
 }
@@ -57,15 +57,15 @@ static void enumerate_commands(const mach_header_t *head, cmd_enum_callback_t cb
     }
 }
 
-static int find_id_dylib(struct load_command *cmd, const uint8_t *pcmd, const uint8_t **pdylib)
+static glug_bool find_id_dylib(struct load_command *cmd, const uint8_t *pcmd, const uint8_t **pdylib)
 {
     if (cmd->cmd == LC_ID_DYLIB)
     {
         *pdylib = pcmd;
-        return 1;
+        return true;
     }
 
-    return 0;
+    return false;
 }
 
 const char *lib_extension()
@@ -93,7 +93,7 @@ size_t lib_soname(char *dst, size_t count, const so_handle_t so)
     return strlen((const char *)(pdylib + dylib.dylib.name.offset)) + 1;
 }
 
-static int find_symbol_segments(struct load_command *cmd, const uint8_t *pcmd, const uint8_t **segs[3])
+static glug_bool find_symbol_segments(struct load_command *cmd, const uint8_t *pcmd, const uint8_t **segs[3])
 {
     segment_command_t segtab;
 
@@ -108,9 +108,9 @@ static int find_symbol_segments(struct load_command *cmd, const uint8_t *pcmd, c
             *segs[2] = pcmd;
     }
 
-    if (*segs[0] && *segs[1] && *segs[2]) return 1;
+    if (*segs[0] && *segs[1] && *segs[2]) return true;
 
-    return 0;
+    return false;
 }
 
 char **lib_symbols(const so_handle_t so, size_t *count)

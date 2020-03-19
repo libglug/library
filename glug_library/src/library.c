@@ -10,15 +10,10 @@ static void load_lazy_lib(struct glug_library *lib)
 {
     free_lib(lib->dl);
     lib->dl = load_lib(lib->name);
-    lib->loaded = 1;
+    lib->loaded = true;
 }
 
-const char *glug_lib_extension()
-{
-    return lib_extension();
-}
-
-int glug_lib_exists(const char *name)
+glug_bool glug_lib_exists(const char *name)
 {
     so_handle_t dl = lazy_load_lib(name);
     if (dl)
@@ -27,12 +22,12 @@ int glug_lib_exists(const char *name)
     return dl != NULL;
 }
 
-size_t glug_lib_soname(char *dst, size_t count, const struct glug_library *lib)
+const char *glug_lib_extension()
 {
-    return lib_soname(dst, count, lib->dl);
+    return lib_extension();
 }
 
-static struct glug_library *make_struct(const char *name, int loaded, so_handle_t so)
+static struct glug_library *make_struct(const char *name, glug_bool loaded, so_handle_t so)
 {
     size_t name_len = strlen(name);
     struct glug_library *l = malloc(sizeof(struct glug_library));
@@ -48,7 +43,7 @@ struct glug_library *glug_lib_load(const char *name)
     so_handle_t dl = load_lib(name);
     if (!dl) return NULL;
 
-    return make_struct(name, 1, dl);
+    return make_struct(name, true, dl);
 }
 
 struct glug_library *glug_lib_lazy(const char *name)
@@ -56,7 +51,7 @@ struct glug_library *glug_lib_lazy(const char *name)
     so_handle_t dl = lazy_load_lib(name);
     if (!dl) return NULL;
 
-    return make_struct(name, 0, dl);
+    return make_struct(name, false, dl);
 }
 
 void glug_lib_free(struct glug_library *lib)
@@ -69,12 +64,17 @@ void glug_lib_free(struct glug_library *lib)
     }
 }
 
-int glug_lib_is_loaded(const struct glug_library *lib)
+glug_bool glug_lib_is_loaded(const struct glug_library *lib)
 {
     return lib && lib->loaded;
 }
 
-int glug_lib_has_proc(const struct glug_library *lib, const char *proc)
+size_t glug_lib_soname(char *dst, size_t count, const struct glug_library *lib)
+{
+    return lib_soname(dst, count, lib->dl);
+}
+
+glug_bool glug_lib_has_proc(const struct glug_library *lib, const char *proc)
 {
     return glug_lib_proc(lib, proc) != NULL;
 }
