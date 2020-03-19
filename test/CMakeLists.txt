@@ -44,19 +44,6 @@ list(
     ${MOCK_DIR}/soname.mock.c
     ${MOCK_DIR}/symbols.mock.c
 )
-add_unit_test(
-    TARGETNAME
-        unit-makefilename
-    SOURCES
-        unit/makefilename.c
-        ${SRC_ROOT}/src/library.c
-        create_suite.h
-        ${MOCKS}
-    INCLUDE_DIRS
-        ${INCLUDE_DIRS}
-    LINK_LIBS
-        CUnit
-)
 
 add_unit_test(
     TARGETNAME
@@ -93,7 +80,7 @@ add_custom_target(
     ALL
     DEPENDS
         # add other tests executables here
-        CUnit integration unit-makefilename unit-loadlibs unit-symbols ${TESTED_LIB}
+        CUnit integration unit-loadlibs unit-symbols ${TESTED_LIB}
 )
 
 # copy the CUnit library to the same directory
