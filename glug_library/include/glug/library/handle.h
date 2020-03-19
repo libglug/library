@@ -9,13 +9,13 @@
 
 GLUG_EXTERN_START
 
-#if defined(GLUG_OS_WIN)
+#if GLUG_OS == GLUG_OS_WIN
 
     #define WIN32_LEAN_AND_MEAN
     #include <Windows.h>
     typedef HMODULE so_handle_t;
 
-#elif defined(GLUG_OS_LIN) || defined(GLUG_OS_MAC)
+#elif GLUG_OS == GLUG_OS_MAC || GLUG_OS == GLUG_OS_LIN || GLUG_OS == GLUG_OS_BSD
 
     typedef void *so_handle_t;
 
