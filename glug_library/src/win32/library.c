@@ -8,7 +8,7 @@
 
 #include <stdlib.h>
 
-static int get_exports(const so_handle so, PBYTE *base, IMAGE_EXPORT_DIRECTORY *exp)
+static int get_exports(const so_handle_t so, PBYTE *base, IMAGE_EXPORT_DIRECTORY *exp)
 {
     IMAGE_DOS_HEADER *doshdr;
     IMAGE_FILE_HEADER fhdr;
@@ -50,17 +50,17 @@ const char *lib_extension()
     return ".dll";
 }
 
-so_handle load_lib(const char *name)
+so_handle_t load_lib(const char *name)
 {
     return LoadLibrary(TEXT(name));
 }
 
-so_handle lazy_load_lib(const char *name)
+so_handle_t lazy_load_lib(const char *name)
 {
     return LoadLibraryEx(TEXT(name), NULL, DONT_RESOLVE_DLL_REFERENCES);
 }
 
-size_t lib_soname(char *dst, size_t count, const so_handle so)
+size_t lib_soname(char *dst, size_t count, const so_handle_t so)
 {
     PBYTE base;
     IMAGE_EXPORT_DIRECTORY exp;
@@ -71,17 +71,17 @@ size_t lib_soname(char *dst, size_t count, const so_handle so)
     return strlen((char *)(base + exp.Name)) + 1;
 }
 
-void *get_lib_proc(const so_handle so, const char *proc)
+void *get_lib_proc(const so_handle_t so, const char *proc)
 {
     return (void *)GetProcAddress(so, TEXT(proc));
 }
 
-void free_lib(so_handle so)
+void free_lib(so_handle_t so)
 {
     FreeLibrary(so);
 }
 
-char **lib_symbols(const so_handle so, size_t *count)
+char **lib_symbols(const so_handle_t so, size_t *count)
 {
     char **symbols = NULL;
     DWORD *nameaddrs;

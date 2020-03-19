@@ -20,7 +20,7 @@ const char *glug_lib_extension()
 
 int glug_lib_exists(const char *name)
 {
-    so_handle dl = lazy_load_lib(name);
+    so_handle_t dl = lazy_load_lib(name);
     if (dl)
         free_lib(dl);
 
@@ -32,20 +32,20 @@ size_t glug_lib_soname(char *dst, size_t count, const struct glug_library *lib)
     return lib_soname(dst, count, lib->dl);
 }
 
-static struct glug_library *make_struct(const char *name, int loaded, so_handle dl)
+static struct glug_library *make_struct(const char *name, int loaded, so_handle_t so)
 {
     size_t name_len = strlen(name);
     struct glug_library *l = malloc(sizeof(struct glug_library));
     l->name = malloc(name_len + 1);
     strncpy(l->name, name, name_len + 1);
     l->loaded = loaded;
-    l->dl = dl;
+    l->dl = so;
     return l;
 }
 
 struct glug_library *glug_lib_load(const char *name)
 {
-    so_handle dl = load_lib(name);
+    so_handle_t dl = load_lib(name);
     if (!dl) return NULL;
 
     return make_struct(name, 1, dl);
@@ -53,7 +53,7 @@ struct glug_library *glug_lib_load(const char *name)
 
 struct glug_library *glug_lib_lazy(const char *name)
 {
-    so_handle dl = lazy_load_lib(name);
+    so_handle_t dl = lazy_load_lib(name);
     if (!dl) return NULL;
 
     return make_struct(name, 0, dl);
@@ -115,7 +115,7 @@ char **glug_lib_free_symbols(char **symbol_list)
     return NULL;
 }
 
-so_handle lib_handle(const struct glug_library *lib)
+so_handle_t glug_lib_handle(const struct glug_library *lib)
 {
     if (!lib)
         return NULL;

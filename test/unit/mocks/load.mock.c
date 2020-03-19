@@ -1,7 +1,7 @@
 #include <library_platform.h>
 #include "libs.mock.h"
 
-so_handle lazy_load_lib(const char *name)
+so_handle_t lazy_load_lib(const char *name)
 {
     const library_info *lib_info = find_library_by_name(name);
     if (lib_info)
@@ -10,7 +10,7 @@ so_handle lazy_load_lib(const char *name)
     return NULL;
 }
 
-so_handle load_lib(const char *name)
+so_handle_t load_lib(const char *name)
 {
     library_info *lib_info = find_library_by_name(name);
     if (lib_info)
@@ -19,12 +19,12 @@ so_handle load_lib(const char *name)
     return NULL;
 }
 
-void free_lib(so_handle so)
+void free_lib(so_handle_t so)
 {
     (void) so;
 }
 
-void *get_lib_proc(const so_handle so, const char *name)
+void *get_lib_proc(const so_handle_t so, const char *name)
 {
     return find_library_symbol(so, name);
 }

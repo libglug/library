@@ -13,7 +13,7 @@ typedef struct
 
 typedef struct
 {
-    so_handle handle;
+    so_handle_t handle;
     char name[52];
     int nfcn;
     fcn_info fcns[10];
@@ -21,8 +21,8 @@ typedef struct
 
 extern library_info libraries[LIB_COUNT];
 library_info *find_library_by_name(const char *name);
-library_info *find_library_by_handle(const so_handle handle);
+library_info *find_library_by_handle(const so_handle_t handle);
 
-void *find_library_symbol(const so_handle so, const char *name);
+void *find_library_symbol(const so_handle_t so, const char *name);
 
 #endif // MOCKLIBS_H
