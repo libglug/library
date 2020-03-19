@@ -5,7 +5,7 @@
 
 using namespace std;
 
-typedef_func(say, void, const char *);
+func_t(say, void, const char *);
 
 int main()
 {
