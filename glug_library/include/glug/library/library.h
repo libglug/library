@@ -9,7 +9,7 @@
 #include <glug/library/library_t.h>
 #include <glug/library/func_t.h>
 
-typedef_func(generic_fcn, void *, void);
+func_t(generic_fcn, void *, void);
 
 GLUG_EXTERN_START
 GLUG_LIB_API const char *           glug_lib_extension(void);

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef_func(say, void, const char *);
+func_t(say, void, const char *);
 
 char *make_filename(const char *lib_name)
 {

@@ -9,7 +9,7 @@
 
 #include "../create_suite.h"
 
-typedef_func(say, void, const char *);
+func_t(say, void, const char *);
 
 char *make_filename(const char *lib_name)
 {
