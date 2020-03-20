@@ -9,7 +9,7 @@
 
 #include "../create_suite.h"
 
-func_t(say, void, const char *);
+glug_func_t(say, void, const char *);
 
 char *make_filename(const char *lib_name)
 {
@@ -44,19 +44,19 @@ void test_load_hello(void)
     CU_ASSERT_TRUE_FATAL(is_lib);
 
     // lib shouldn't be loaded since it's loaded lazily
-    libhello = glug_lib_lazy(full_name);
+    glug_lib_lazy(&libhello, full_name);
     CU_ASSERT_FALSE(glug_lib_is_loaded(libhello));
 
     // getting the lib's symbols: [say_hello]
-    hello_symbols = glug_lib_symbols(libhello, &symbols);
+    hello_symbols = glug_lib_symbols(libhello, malloc);
     CU_ASSERT_EQUAL(symbols, 1);
     CU_ASSERT_STRING_EQUAL(hello_symbols[0], "say_hello");
     CU_ASSERT_PTR_NULL(hello_symbols[1]);
 
     // get lib name length and malloc big enough buffer (w/ trailing NULL)
-    namelen = glug_lib_soname(NULL, 0, libhello);
+    namelen = glug_lib_soname(libhello, NULL, 0);
     lib_soname = malloc(namelen * sizeof(char));
-    glug_lib_soname(lib_soname, namelen, libhello);
+    glug_lib_soname(libhello, lib_soname, namelen);
     CU_ASSERT_EQUAL(strncmp(lib_soname, "hello", 5), 0);
 
     // getting proc should load the library
@@ -65,8 +65,8 @@ void test_load_hello(void)
     CU_ASSERT_PTR_NOT_NULL(say_hello);
 
     free(lib_soname);
-    hello_symbols = glug_lib_free_symbols(hello_symbols);
-    glug_lib_free(libhello);
+//    hello_symbols = glug_lib_free_symbols(hello_symbols);
+    glug_lib_free(&libhello);
     free(full_name);
 }
 

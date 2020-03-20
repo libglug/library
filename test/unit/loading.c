@@ -26,20 +26,22 @@ void test_libs_exist(void)
 
 void test_load(void)
 {
-    struct glug_library *lib = glug_lib_lazy("testlib1");
+    struct glug_library *lib;
+    glug_lib_lazy(&lib, "testlib1");
     CU_ASSERT_FALSE(glug_lib_is_loaded(lib));
 
-    lib = glug_lib_load("opengl");
+    glug_lib_load(&lib, "opengl");
     CU_ASSERT_TRUE(glug_lib_is_loaded(lib));
 
-    lib = glug_lib_load("garbage");
+    glug_lib_load(&lib, "garbage");
     CU_ASSERT_FALSE(glug_lib_is_loaded(lib));
 }
 
 void test_getproc(void)
 {
     generic_fcn proc = NULL;
-    struct glug_library *lib = glug_lib_lazy("testlib2");
+    struct glug_library *lib;
+    glug_lib_lazy(&lib, "testlib2");
     CU_ASSERT_FALSE(glug_lib_is_loaded(lib));
 
     CU_ASSERT_FALSE(glug_lib_has_proc(lib, "testf2"))
@@ -47,7 +49,7 @@ void test_getproc(void)
     CU_ASSERT_PTR_NOT_NULL(proc);
     CU_ASSERT_TRUE(glug_lib_is_loaded(lib));
 
-    lib = glug_lib_load("testlib1");
+    glug_lib_load(&lib, "testlib1");
     CU_ASSERT_TRUE(glug_lib_is_loaded(lib));
 
     CU_ASSERT_TRUE(glug_lib_has_proc(lib, "testf2"));

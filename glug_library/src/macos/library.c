@@ -7,16 +7,18 @@
 #include <glug/library/handle.h>
 
 #include <string.h>
-#include <stdlib.h>
 
-#if defined(__LP64__)
+#if defined(__LP64__) || (__SIZEOF_POINTER__ == 8)
     typedef struct mach_header_64 mach_header_t;
     typedef struct segment_command_64 segment_command_t;
+    typedef struct nlist_64 nlist_t;
 #else
     typedef struct mach_header mach_header_t;
     typedef struct segment_command segment_command_t;
+    typedef struct nlist nlist_t;
 #endif
 
+typedef struct symtab_command symtab_command_t;
 typedef glug_bool (*cmd_enum_callback_t)(struct load_command *, const uint8_t *, void *);
 
 static uint32_t get_lib_index(const so_handle_t so)
@@ -113,17 +115,18 @@ static glug_bool find_symbol_segments(struct load_command *cmd, const uint8_t *p
     return false;
 }
 
-char **lib_symbols(const so_handle_t so, size_t *count)
+char **lib_symbols(const so_handle_t so, size_t *count, alloc_t alloc)
 {
     char **symbols = NULL;
+    uint8_t *psymaddr, *psymstr;
     const mach_header_t *head = get_lib_head(so);
-    size_t i, nsym = 0;
-    const uint8_t *psymtab = 0, *psegtext = 0, *pseglink = 0;
+    size_t i, nsym = 0, allocsz = 0;
+    const uint8_t *psymtab = NULL, *psegtext = NULL, *pseglink = NULL;
     const uint8_t **psegs[3] = { &psymtab, &psegtext, &pseglink };
-    struct symtab_command symtab;
+    symtab_command_t symtab;
     segment_command_t segtext, seglink;
     uintptr_t phead, offset, strs;
-    struct nlist_64 *sym;
+    nlist_t *sym;
 
     // can't find "so", return early
     if (!head) return symbols;
@@ -135,7 +138,7 @@ char **lib_symbols(const so_handle_t so, size_t *count)
     if (!psymtab || !psegtext || !pseglink) return symbols;
 
     // copy the tables and segments
-    memcpy(&symtab,  psymtab,  sizeof(struct symtab_command));
+    memcpy(&symtab,  psymtab,  sizeof(symtab_command_t));
     memcpy(&segtext, psegtext, sizeof(segment_command_t));
     memcpy(&seglink, pseglink, sizeof(segment_command_t));
 
@@ -144,24 +147,37 @@ char **lib_symbols(const so_handle_t so, size_t *count)
     offset = (uintptr_t)(seglink.vmaddr - segtext.vmaddr - seglink.fileoff);
     strs = phead + symtab.stroff + offset;
 
-    // count the exported symbols
-    sym = (struct nlist_64 *)(phead + symtab.symoff + offset);
+    // count the exported symbols and sum the length of all strings
+    sym = (nlist_t *)(phead + symtab.symoff + offset);
     for (i = 0; i < symtab.nsyms; ++i, ++sym)
         if ((sym->n_type & N_EXT) == N_EXT && sym->n_value)
-             ++nsym;
+        {
+            ++nsym;
+            allocsz += strlen((char *)(strs + sym->n_un.n_strx + 1)) + 1;
+        }
+
+    // reserve pointers to each string
+    allocsz += (nsym + 1) * sizeof(char *);
 
     // copy strings into the symbols array
-    symbols = realloc(symbols, (nsym + 1) * sizeof(char *));
-    nsym = 0;
-    sym = (struct nlist_64 *)(phead + symtab.symoff + offset);
+    symbols = alloc(allocsz);
+    psymaddr = (uint8_t *)symbols;
+    psymstr = (uint8_t *)(symbols + nsym + 1);
+    sym = (nlist_t *)(phead + symtab.symoff + offset);
     for (i = 0; i < symtab.nsyms; ++i, ++sym)
         if ((sym->n_type & N_EXT) == N_EXT && sym->n_value)
-            symbols[nsym++] = strdup((char *)(strs + sym->n_un.n_strx + 1));
+        {
+            size_t len = strlen((char *)(strs + sym->n_un.n_strx + 1));
+            memcpy((void *)psymaddr, &psymstr, sizeof(char *));
+            strcpy((char *)psymstr, (char *)(strs + sym->n_un.n_strx + 1));
+            psymaddr += sizeof(char *);
+            psymstr += len + 1;
+        }
+    // set the last symbol pointer as NULL to simplify iteration
+    memset((void *)psymaddr, 0, sizeof(char *));
 
     // "return" the number of symbols
     if (count) *count = nsym;
 
-    // set the last symbol entry as NULL to simplify iteration and return
-    symbols[nsym] = NULL;
     return symbols;
 }

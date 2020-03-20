@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-func_t(say, void, const char *);
+glug_func_t(say, void, const char *);
 
 char *make_filename(const char *lib_name)
 {
@@ -37,13 +37,14 @@ int main()
         say say_hello;
         size_t namelen = 0;
         char *lib_soname;
-        struct glug_library *libhello = glug_lib_lazy(full_name);
-        char **psym, **hello_symbols = glug_lib_symbols(libhello, &symbols);
+        struct glug_library *libhello;
+        glug_lib_lazy(&libhello, full_name);
+        char **psym, **hello_symbols = glug_lib_symbols(libhello, malloc);
 
         // get lib name length and malloc big enough buffer (w/ trailing NULL)
-        namelen = glug_lib_soname(NULL, 0, libhello);
+        namelen = glug_lib_soname(libhello, NULL, 0);
         lib_soname = malloc(namelen * sizeof(char));
-        glug_lib_soname(lib_soname, namelen, libhello);
+        glug_lib_soname(libhello, lib_soname, namelen);
         printf("lib so name: %s\n", lib_soname);
 
         printf("%zd symbol(s):\n", symbols);
@@ -55,8 +56,8 @@ int main()
             say_hello("glub_lib");
 
         free(lib_soname);
-        hello_symbols = glug_lib_free_symbols(hello_symbols);
-        glug_lib_free(libhello);
+        free(hello_symbols);
+        glug_lib_free(&libhello);
     }
 
     free(full_name);

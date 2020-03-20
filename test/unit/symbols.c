@@ -3,6 +3,7 @@
 #include <CUnit/Assert.h>
 
 #include "../create_suite.h"
+#include <stdlib.h>
 
 const char *lib_extension()
 {
@@ -12,11 +13,12 @@ const char *lib_extension()
 void test_empty_symbols(void)
 {
     size_t count = (size_t)-1;
-    struct glug_library *lib = glug_lib_load("empty");
+    struct glug_library *lib;
+    glug_lib_load(&lib, "empty");
     char **syms;
     CU_ASSERT_PTR_NOT_NULL(lib);
 
-    syms = glug_lib_symbols(lib, &count);
+    syms = glug_lib_symbols(lib, malloc);
 
     CU_ASSERT_EQUAL(count, 0);
     CU_ASSERT_PTR_NOT_NULL(syms);
@@ -26,8 +28,9 @@ void test_empty_symbols(void)
 void test_lib_symbols(void)
 {
     size_t count = (size_t)-1;
-    struct glug_library *lib = glug_lib_load("testlib1");
-    char **syms = glug_lib_symbols(lib, &count);
+    struct glug_library *lib;
+    glug_lib_load(&lib, "testlib1");
+    char **syms = glug_lib_symbols(lib, malloc);
 
     CU_ASSERT_EQUAL(count, 2);
     CU_ASSERT_STRING_EQUAL(syms[0], "testf");

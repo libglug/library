@@ -1,11 +1,12 @@
 #include <glug/library/library.h>
 #include <glug/library/func_t.h>
 
+#include <cstdlib>
 #include <iostream>
 
 using namespace std;
 
-func_t(say, void, const char *);
+glug_func_t(say, void, const char *);
 
 int main()
 {
@@ -19,13 +20,14 @@ int main()
     if (is_lib)
     {
         size_t symbols = 0;
-        struct glug_library *libhello = glug_lib_lazy(full_name.c_str());
-        char **psym, **hello_symbols = glug_lib_symbols(libhello, &symbols);
+        struct glug_library *libhello;
+        glug_lib_lazy(&libhello, full_name.c_str());
+        char **psym, **hello_symbols = glug_lib_symbols(libhello, (alloc_t)malloc);
 
         // get lib name length and malloc big enough buffer (w/ trailing NULL)
-        size_t namelen = glug_lib_soname(nullptr, 0, libhello);
+        size_t namelen = glug_lib_soname(libhello, nullptr, 0);
         char *lib_soname = new char[namelen]();
-        glug_lib_soname(lib_soname, namelen, libhello);
+        glug_lib_soname(libhello, lib_soname, namelen);
         cout << "lib so name: " << lib_soname << endl;;
 
         cout << symbols << " symbol(s):" << endl;
@@ -37,8 +39,8 @@ int main()
             say_hello("glub_lib");
 
         delete[] lib_soname;
-        hello_symbols = glug_lib_free_symbols(hello_symbols);
-        glug_lib_free(libhello);
+        free(hello_symbols);
+        glug_lib_free(&libhello);
     }
 
     return 0;

@@ -38,30 +38,31 @@ static struct glug_library *make_struct(const char *name, glug_bool loaded, so_h
     return l;
 }
 
-struct glug_library *glug_lib_load(const char *name)
+void glug_lib_load(struct glug_library **lib, const char *name)
 {
     so_handle_t dl = load_lib(name);
-    if (!dl) return NULL;
+    if (!dl) return;
 
-    return make_struct(name, true, dl);
+    *lib = make_struct(name, true, dl);
 }
 
-struct glug_library *glug_lib_lazy(const char *name)
+void glug_lib_lazy(struct glug_library **lib, const char *name)
 {
     so_handle_t dl = lazy_load_lib(name);
-    if (!dl) return NULL;
+    if (!dl) return;
 
-    return make_struct(name, false, dl);
+    *lib = make_struct(name, false, dl);
 }
 
-void glug_lib_free(struct glug_library *lib)
+void glug_lib_free(struct glug_library **lib)
 {
-    if (lib)
-    {
-        free(lib->name);
-        free_lib(lib->dl);
-        free(lib);
-    }
+    struct glug_library *library = *lib;
+
+    free(library->name);
+    free_lib(library->dl);
+    free(library);
+
+    *lib = NULL;
 }
 
 glug_bool glug_lib_is_loaded(const struct glug_library *lib)
@@ -69,7 +70,7 @@ glug_bool glug_lib_is_loaded(const struct glug_library *lib)
     return lib && lib->loaded;
 }
 
-size_t glug_lib_soname(char *dst, size_t count, const struct glug_library *lib)
+size_t glug_lib_soname(const struct glug_library *lib, char *dst, size_t count)
 {
     return lib_soname(dst, count, lib->dl);
 }
@@ -90,29 +91,18 @@ generic_fcn glug_lib_proc(const struct glug_library *lib, const char *proc)
     return (generic_fcn)get_lib_proc(lib->dl, proc);
 }
 
-char **glug_lib_symbols(const struct glug_library *lib, size_t *count)
+char **glug_lib_symbols(const struct glug_library *lib, alloc_t alloc)
 {
     size_t nsymbols = 0;
-    char **symbols = lib_symbols(lib->dl, &nsymbols);
+    char **symbols = lib_symbols(lib->dl, &nsymbols, alloc);
     // always provide a "list" to iterate
     if (!symbols)
     {
-        symbols = malloc(sizeof(char *));
+        symbols = alloc(sizeof(char *));
         symbols[0] = NULL;
     }
 
-    if (count) *count = nsymbols;
     return symbols;
-}
-
-char **glug_lib_free_symbols(char **symbol_list)
-{
-    for (char **psym = symbol_list; *psym; ++psym)
-        free(*psym);
-
-    free(symbol_list);
-
-    return NULL;
 }
 
 so_handle_t glug_lib_handle(const struct glug_library *lib)
